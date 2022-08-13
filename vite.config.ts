@@ -63,9 +63,9 @@ export default defineConfig(({ command, mode }) => {
     };
 
     if (CLOSURE_COMPILER === 'closure') {
-      plugins.push(closureCompilerPlugin(closureOptions));
+      // plugins.push(closureCompilerPlugin(closureOptions));
     } else if (CLOSURE_COMPILER === 'amp') {
-      plugins.push(ampClosurePlugin(closureOptions));
+      // plugins.push(ampClosurePlugin(closureOptions));
     }
   }
 
