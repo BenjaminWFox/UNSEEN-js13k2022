@@ -7,7 +7,9 @@ function initData() {
    * All settings are initially tested based off a starting width of 1600px
    */
 
+  const baseWidth = 1600;
   const width = window.innerWidth;
+  const ratio = width / baseWidth
   const height = width / 2 > window.innerHeight ? window.innerHeight : width / 2;
   const maxDyUp = -width / 200;
   const maxDyDown = width / 267;
@@ -18,6 +20,7 @@ function initData() {
 
   return {
     playing: true,
+    ratio,
     width: window.innerWidth,
     height: width / 2 > window.innerHeight ? window.innerHeight : width / 2,
     refWidth: width / 20,
@@ -27,11 +30,13 @@ function initData() {
     maxDyDownChange: Math.abs(maxDyUp * .1),
     objectives: [] as Array<Sprite>,
     obstacles: [] as Array<Sprite>,
-    distance: 0,
+    distance: 1,
     pickups: 0,
     canvas,
     context,
-    scrollSpeed: -2
+    baseSpeed: -2 * ratio,
+    scrollSpeed: -2,
+    font: `${32 * ratio}px Arial`,
   }
 }
 

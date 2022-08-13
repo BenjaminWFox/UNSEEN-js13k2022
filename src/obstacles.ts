@@ -16,10 +16,20 @@ export function makeObstacle(startX: number, startY: number) {
   });
 }
 
-export function makeNewObstacle() {
-  // const startX = D.width - (obstacleWidth * 3);
-  const startX = 400;
-  const startY = D.height / 2 - (obstacleHeight / 2);
+export function makeStartingObstacles() {
+  const startX1 = D.width * .75;
+  const startY1 = D.height / 2 + (obstacleHeight / 2  );
+  const startX2 = D.width * 1.1;
+  const startY2 = D.height / 2 - (obstacleHeight);
   
-  D.obstacles.push(makeObstacle(startX, startY))
+  D.obstacles.push(makeObstacle(startX1, startY1))
+  D.obstacles.push(makeObstacle(startX2, startY2))
+}
+
+export function makeNewObstacle() {
+  // // const startX = D.width - (obstacleWidth * 3);
+  // const startX = D.width * .75;
+  // const startY = D.height / 2 - (obstacleHeight / 2);
+  
+  // D.obstacles.push(makeObstacle(startX, startY))
 }

@@ -30,7 +30,7 @@ const VITE_MINIFY = process.env['VITE_MINIFY'] || 'terser'; // 'terser', 'esbuil
 // 1) "closure" - Calls Google Closure Compiler directly.
 // 2) "amp" - Uses the AMP Project wrapper.  This provides slightly better results, but is more picky about syntax errors.
 // 3) "none" - Useful for debugging.
-const CLOSURE_COMPILER = process.env['CLOSURE_COMPILER'] || 'closure'; // 'closure', 'amp', or 'none'
+const CLOSURE_COMPILER = process.env['CLOSURE_COMPILER'] || 'none'; // 'closure', 'amp', or 'none'
 
 export default defineConfig(({ command, mode }) => {
   if (command !== 'build') {
@@ -63,9 +63,9 @@ export default defineConfig(({ command, mode }) => {
     };
 
     if (CLOSURE_COMPILER === 'closure') {
-      // plugins.push(closureCompilerPlugin(closureOptions));
+      plugins.push(closureCompilerPlugin(closureOptions));
     } else if (CLOSURE_COMPILER === 'amp') {
-      // plugins.push(ampClosurePlugin(closureOptions));
+      plugins.push(ampClosurePlugin(closureOptions));
     }
   }
 

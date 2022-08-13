@@ -16,9 +16,24 @@ export function makeObjective(startX: number, startY: number) {
   });
 }
 
+export function makeStartingObstacles() {
+  const startX1 = D.width / 2;
+  const startY1 = 100 * D.ratio;
+  const startX2 = D.width / 2;
+  const startY2 = 100 * D.ratio;
+  
+  for (let i = 0; i < 10; i += 1) {
+    const sX1 = (startX1 + (objectiveWidth * 4 * i))
+    const sX2 = (startX2 + (objectiveWidth * 4 * i))
+
+    D.objectives.push(makeObjective(sX1, startY1))
+    D.objectives.push(makeObjective(sX2, startY2))
+  }
+}
+
 export function makeObjectiveCollection() {
   const startX = D.width / 2;
-  const startY = 100;
+  const startY = 100 * D.ratio;
   for (let i = 0; i < 10; i += 1) {
     const sX = (startX + (objectiveWidth * 4 * i))
 
