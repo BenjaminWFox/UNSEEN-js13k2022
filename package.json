@@ -8,7 +8,7 @@
     "build": "vite build",
     "build:ts": "tsc && vite build",
     "preview": "vite preview",
-    "prettier": "prettier --config './package.json' --check 'src/**/*.ts'"
+    "prettier": "prettier --config './package.json' --check 'src/**/*.ts' -w"
   },
   "devDependencies": {
     "@ampproject/rollup-plugin-closure-compiler": "0.27.0",

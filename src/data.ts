@@ -9,7 +9,7 @@ function initData() {
 
   const baseWidth = 1600;
   const width = window.innerWidth;
-  const ratio = width / baseWidth
+  const ratio = width / baseWidth;
   const height = width / 2 > window.innerHeight ? window.innerHeight : width / 2;
   const maxDyUp = -width / 200;
   const maxDyDown = width / 267;
@@ -26,8 +26,8 @@ function initData() {
     refWidth: width / 20,
     maxDyUp: maxDyUp,
     maxDyDown: maxDyDown,
-    maxDyUpChange: Math.abs(maxDyUp * .05),
-    maxDyDownChange: Math.abs(maxDyUp * .1),
+    maxDyUpChange: Math.abs(maxDyUp * 0.05),
+    maxDyDownChange: Math.abs(maxDyUp * 0.1),
     objectives: [] as Array<Sprite>,
     obstacles: [] as Array<Sprite>,
     distance: 1,
@@ -37,20 +37,17 @@ function initData() {
     baseSpeed: -2 * ratio,
     scrollSpeed: -2,
     font: `${32 * ratio}px Arial`,
-  }
+  };
 }
 
 let data = {
-  ...initData()
-}
+  ...initData(),
+};
 
 function resetData() {
   data = {
-    ...initData()
-  }
+    ...initData(),
+  };
 }
 
-export {
-  data,
-  resetData,
-}
+export { data, resetData };
