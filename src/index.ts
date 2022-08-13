@@ -1,215 +1,181 @@
-import { initKeys, keys, KEY_A, KEY_D, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_S, KEY_UP, KEY_W, updateKeys } from './keys';
-import { initMouse, mouse, updateMouse } from './mouse';
-import { music } from './music';
-import { zzfx, zzfxP } from './zzfx';
 
-const WIDTH = 240;
-const HEIGHT = 135;
-const MILLIS_PER_SECOND = 1000;
-const FRAMES_PER_SECOND = 30;
-const MILLIS_PER_FRAME = MILLIS_PER_SECOND / FRAMES_PER_SECOND;
-const ENTITY_TYPE_PLAYER = 0;
-const ENTITY_TYPE_BULLET = 1;
-const ENTITY_TYPE_SNAKE = 2;
-const ENTITY_TYPE_SPIDER = 3;
-const PLAYER_SPEED = 2;
-const BULLET_SPEED = 4;
-const SPIDER_SPEED = 1;
+import { Sprite, GameLoop, initKeys, keyPressed, KText, initPointer, pointerPressed, getPointer } from 'kontra';
+import { data as D } from './data'
+import { makeObjectiveCollection } from './objectives'
+import { makeNewObstacle } from './obstacles';
 
-interface Entity {
-  readonly entityType: number;
-  x: number;
-  y: number;
-  dx: number;
-  dy: number;
-  health: number;
-  cooldown: number;
-  aggro?: boolean;
-  shooter?: Entity;
+initKeys();
+initPointer();
+
+console.log('This is my game running!', D.canvas, D.canvas.width, D.canvas.height, D.height);
+
+console.log(D.maxDyUp, D.maxDyDown, D.maxDyUpChange, D.maxDyDownChange)
+
+const birdWidth = D.width / 20;
+const birdHeight = birdWidth / 2;
+let bird = Sprite({
+  x: birdWidth * 3,        // starting x,y position of the sprite
+  y: D.height / 2 - (birdHeight / 2),
+  color: 'red',  // fill color of the sprite rectangle
+  width: birdWidth,     // width and height of the sprite rectangle
+  height: birdHeight,
+  dy: 0          // move the sprite 2px to the right every frame
+});
+
+// console.log('Data', D);
+// console.log('Bird', bird);
+
+makeObjectiveCollection();
+makeNewObstacle();
+
+// console.log('Obstacle');
+// console.log('dx', D.obstacles[0].dx);
+// console.log('dy', D.obstacles[0].dy);
+// console.log('x', D.obstacles[0].x);
+// console.log('y', D.obstacles[0].y);
+
+// console.log(D.objectives);
+// console.log(D.obstacles);
+
+const distanceText = KText({
+  text: '',
+  font: '32px Arial',
+  color: 'white',
+  x: 20,
+  y: 20,
+  textAlign: 'left',
+  anchor: { x: 0, y: 0 }
+})
+
+function renderStats() {
+  distanceText.text = `Distance: ${D.distance}    Pickups: ${D.pickups}`
+  distanceText.render()
 }
 
-const canvas = document.querySelector('#c') as HTMLCanvasElement;
-const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+function isCollision(sprite: Sprite, beLenient: boolean) {
+  const leniency = beLenient ? .5 : 0;
 
-const image = new Image();
-image.src = 'i.png';
+  if (sprite.x > bird.x + bird.width || sprite.x + sprite.width < bird.x + (bird.width * leniency)) {
+    return false;
+   }
 
-const entities: Entity[] = [];
+  if (sprite.y + sprite.height < bird.y || sprite.y > bird.y + bird.height) {
+    return false;
+  }
 
-const player = createEntity(ENTITY_TYPE_PLAYER, 16, 64);
-
-for (let i = 0; i < 5; i++) {
-  randomEnemy();
+  return true;
 }
 
-let score = 0;
-let musicStarted = false;
-
-initKeys(canvas);
-initMouse(canvas);
-
-function createEntity(entityType: number, x: number, y: number, dx = 0, dy = 0): Entity {
-  const e = {
-    entityType,
-    x,
-    y,
-    dx,
-    dy,
-    health: 100,
-    cooldown: 0,
-  };
-  entities.push(e);
-  return e;
+function isPickup(sprite: Sprite) {
+  return isCollision(sprite, false);
 }
 
-function randomEnemy(): void {
-  const entityType = Math.random() < 0.5 ? ENTITY_TYPE_SNAKE : ENTITY_TYPE_SPIDER;
-  const x = Math.floor(64 + Math.random() * (WIDTH - 64));
-  const y = Math.floor(Math.random() * HEIGHT);
-  createEntity(entityType, x, y);
+function isGameOver(sprite: Sprite) {
+  return isCollision(sprite, true);
 }
 
-function gameLoop(): void {
-  if (Math.random() < 0.01) {
-    randomEnemy();
-  }
-  updateKeys();
-  updateMouse();
-  handleInput();
-  ai();
-  collisionDetection();
-  render();
-}
+let loop = GameLoop({  // create the main game loop
+  update: function () { // update the game state
+    D.scrollSpeed = -1 + (-1 * Math.floor(D.distance / 1000))
 
-function handleInput(): void {
-  if (!musicStarted && mouse.buttons[0].down) {
-    musicStarted = true;
-    zzfxP(...music).loop = true;
-  }
-  if (keys[KEY_UP].down || keys[KEY_W].down) {
-    player.y -= PLAYER_SPEED;
-  }
-  if (keys[KEY_LEFT].down || keys[KEY_A].down) {
-    player.x -= PLAYER_SPEED;
-  }
-  if (keys[KEY_DOWN].down || keys[KEY_S].down) {
-    player.y += PLAYER_SPEED;
-  }
-  if (keys[KEY_RIGHT].down || keys[KEY_D].down) {
-    player.x += PLAYER_SPEED;
-  }
-  if (mouse.buttons[0].down) {
-    const targetX = (mouse.x / canvas.offsetWidth) * WIDTH;
-    const targetY = (mouse.y / canvas.offsetHeight) * HEIGHT;
-    shoot(player, targetX, targetY, true);
-  }
-}
-
-function shoot(shooter: Entity, targetX: number, targetY: number, sound = false): void {
-  if (shooter.cooldown <= 0) {
-    const dist = Math.hypot(targetX - shooter.x, targetY - shooter.y);
-    const bullet = createEntity(
-      ENTITY_TYPE_BULLET,
-      shooter.x,
-      shooter.y,
-      ((targetX - shooter.x) / dist) * BULLET_SPEED,
-      ((targetY - shooter.y) / dist) * BULLET_SPEED
-    );
-    bullet.shooter = shooter;
-    shooter.cooldown = 10;
-    if (sound) {
-      zzfx(...[, , 90, , 0.01, 0.03, 4, , , , , , , 9, 50, 0.2, , 0.2, 0.01]);
-    }
-  }
-}
-
-function ai(): void {
-  for (let i = entities.length - 1; i >= 0; i--) {
-    const entity = entities[i];
-    entity.x += entity.dx;
-    entity.y += entity.dy;
-    entity.cooldown--;
-
-    if (entity.entityType === ENTITY_TYPE_SNAKE) {
-      snakeAi(entity);
+    // Move the bird up or down
+    if ((keyPressed('space') || pointerPressed('left') || (getPointer().touches as any).length > 0) && bird.dy > D.maxDyUp) {
+      bird.dy -= D.maxDyUpChange;
+    } else if (bird.dy < D.maxDyDown) {
+      bird.dy += D.maxDyDownChange;
     }
 
-    if (entity.entityType === ENTITY_TYPE_SPIDER) {
-      spiderAi(entity);
-    }
+    bird.update();
 
-    // Clear out dead entities
-    if (entity.health <= 0) {
-      entities.splice(i, 1);
-    }
-  }
-}
+    /**
+     * Loop to detect collision with Obstacles
+     */
+    for (let i = 0; i < D.obstacles.length; i += 1) {
+      const sprite = D.obstacles[i];
 
-function snakeAi(snake: Entity): void {
-  if (distance(snake, player) < 64) {
-    shoot(snake, player.x, player.y);
-  }
-}
+      if (sprite.x < 0 - sprite.width) {
+        D.obstacles.splice(i, 1)
+        i -= 1
 
-function spiderAi(spider: Entity): void {
-  if (spider.aggro) {
-    if (spider.x < player.x) {
-      spider.x += SPIDER_SPEED;
-    } else if (spider.x > player.x) {
-      spider.x -= SPIDER_SPEED;
-    }
-    if (spider.y < player.y) {
-      spider.y += SPIDER_SPEED;
-    } else if (spider.y > player.y) {
-      spider.y -= SPIDER_SPEED;
-    }
-  } else if (distance(spider, player) < 64) {
-    spider.aggro = true;
-  }
-}
-
-function collisionDetection(): void {
-  for (const entity of entities) {
-    for (const other of entities) {
-      if (entity !== other && distance(entity, other) < 8) {
-        if (
-          entity.entityType === ENTITY_TYPE_BULLET &&
-          other.entityType !== ENTITY_TYPE_BULLET &&
-          other !== entity.shooter
-        ) {
-          entity.health = 0; // Kill the bullet
-          other.health -= 20; // Damage the target
-          if (other.health <= 0) {
-            zzfx(...[1.01, , 368, 0.01, 0.1, 0.3, 4, 0.31, , , , , , 1.7, , 0.4, , 0.46, 0.1]);
-            if (entity.shooter === player) {
-              score += 100;
-            }
-          }
-        }
+        continue;
       }
+
+      if (isGameOver(sprite)) {
+        gameOver();
+
+        continue;
+      }
+
+      if (sprite.dx !== D.scrollSpeed) {
+        sprite.dx = D.scrollSpeed
+      }
+
+      sprite.update();
     }
+
+    /**
+     * Loop to detect pickups w/ objectives
+     */
+    for (let i = 0; i < D.objectives.length; i += 1) {
+      const sprite = D.objectives[i];
+
+      if (sprite.x < 0 - sprite.width) {
+        D.objectives.splice(i, 1)
+        i -= 1
+
+        continue;
+      }
+
+      if (isPickup(sprite)) {
+        D.pickups += 1
+
+        D.objectives.splice(i, 1)
+        i -= 1
+
+        continue;
+      }
+
+      if (sprite.dx !== D.scrollSpeed) {
+        sprite.dx = D.scrollSpeed
+      }
+
+      sprite.update();
+    }
+
+    /**
+     * Keep the bird between top & bottom canvas bounds
+     */
+    if (bird.y > D.height - birdWidth) {
+      bird.y = D.height - birdWidth
+      bird.dy = 0;
+    } else if (bird.y < birdHeight) {
+      bird.y = birdHeight;
+      bird.dy = 0;
+    }
+  },
+  render: function () { // render the game state
+    D.context.fillRect(0, 0, D.canvas.width, D.canvas.height);
+
+    bird.render();
+
+    D.objectives.forEach((objective) => {
+      objective.render();
+    })
+
+    D.obstacles.forEach((obstacle) => {
+      obstacle.render();
+    })
+
+    renderStats();
+
+    D.distance += (1 - D.scrollSpeed)
+    console.log(D.objectives)
   }
+});
+
+loop.start();    // start the game
+
+function gameOver() {
+  D.playing = false;
+  loop.stop();
 }
-
-function render(): void {
-  ctx.fillStyle = '#111';
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
-
-  for (const entity of entities) {
-    ctx.drawImage(image, entity.entityType * 8, 0, 8, 8, entity.x | 0, entity.y | 0, 8, 8);
-  }
-
-  ctx.fillStyle = '#fff';
-  ctx.font = '10px sans-serif';
-  ctx.fillText('Health: ' + player.health, 0.5, 8.5);
-  ctx.fillText('Score: ' + score, 0.5, 20.5);
-  ctx.fillText('Arrow keys or WASD to move', 0.5, 116.5);
-  ctx.fillText('Left click to shoot', 0.5, 128.5);
-}
-
-const distance = (a: Entity, b: Entity) => Math.hypot(a.x - b.x, a.y - b.y);
-
-window.setInterval(gameLoop, MILLIS_PER_FRAME);
-
-// Set an OS13k trophy
-localStorage['OS13kTrophy,🤗,js13k-starter-2022'] = 'tada';
