@@ -7,15 +7,13 @@ function initData() {
    * All settings are initially tested based off a starting width of 1600px
    */
   let width;
-  let baseWidth;
+  let baseWidth = 1600;
   if (window.innerWidth > window.innerHeight * 2) {
     width = window.innerHeight * 2;
     console.log('SET WIDTH', width);
-     baseWidth = 1800;
   } else {
     width = window.innerWidth
     console.log('OTHER WIDTH', width)
-    baseWidth = 1600;
   }
 
   const height = width / 2; // > window.innerHeight ? window.innerHeight : width / 2;
@@ -43,11 +41,11 @@ function initData() {
     pickups: 0,
     canvas,
     context,
-    baseSpeed: -2 * ratio,
-    scrollSpeed: -2,
+    baseSpeed: -3 * ratio,
+    scrollSpeed: -3,
     font: `${32 * ratio}px Arial`,
-    maxY: height - refWidth,
-    minY: refWidth / 2
+    maxY: height - refWidth + (20 * ratio),
+    minY: (refWidth / 2) - (20 * ratio)
     // maxY: height - (refWidth / 2) - (10 * ratio),
     // minY: 0 + (10 * ratio)
   };

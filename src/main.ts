@@ -1,6 +1,6 @@
 import { Sprite, GameLoop, initKeys, keyPressed, KText, initPointer, pointerPressed, getPointer } from 'kontra';
 import { data as D } from './data';
-import { makeStartingObjectives, makeDebugObjectives } from './objectives';
+import { makeStartingObjectives, makeDebugObjectives, makeObjectiveSet } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 
 initKeys();
@@ -23,8 +23,8 @@ let bird = Sprite({
   dy: -20 * D.ratio, // move the sprite 2px to the right every frame
 });
 
-makeStartingObjectives();
 makeDebugObjectives();
+makeStartingObjectives();
 makeStartingObstacles();
 
 const distanceText = KText({
@@ -38,8 +38,8 @@ const distanceText = KText({
 });
 
 function renderStats() {
-  // distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups} Speed: ${D.scrollSpeed}`;
-  distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups}`;
+  distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups} Speed: ${D.scrollSpeed}`;
+  // distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups}`;
   distanceText.render();
 }
 
@@ -69,8 +69,8 @@ let loop = GameLoop({
   // create the main game loop
   update: function () {
     // update the game state
-    D.scrollSpeed = D.baseSpeed + D.baseSpeed * (D.distance / 10000);
-    D.distance = Math.round(D.distance - D.scrollSpeed);
+    D.scrollSpeed = D.baseSpeed + (D.baseSpeed * (D.distance / 10000));
+    D.distance += 1
 
     /**
      * Loop to detect collision with Obstacles
@@ -125,6 +125,10 @@ let loop = GameLoop({
       }
 
       sprite.update();
+    }
+
+    if (D.objectives.length && D.objectives.at(-1)!.x < D.width) {
+      makeObjectiveSet();
     }
 
     /**
