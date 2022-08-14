@@ -16,23 +16,27 @@ export function makeObjective(startX: number, startY: number) {
   });
 }
 
-export function makeDebugObjectives() {
-  const startX = D.width / 2;
-  const startY = D.height / 2 - objectiveHeight / 2;
+function randomIntFromInterval(min: number, max: number) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
 
-  for (let i = 0; i < 10; i += 1) {
-    const sX = startX + objectiveWidth * 4 * i;
+function makeStraight(initialX?: number, initialY?: number) {
+  const startX = initialX || D.width * 1.25;
+  const startY = initialY || randomIntFromInterval(D.minY + (10 * D.ratio), D.maxY - (10*D.ratio));
+  const offset = objectiveHeight / 2  ;
 
-    D.objectives.push(makeObjective(sX, startY));
+  for (let i = 0; i < 20; i += 1) {
+    const sX = startX + objectiveWidth * 2  * i;
+    const sY = i % 2 === 0 ? startY + offset : startY - offset
+
+    D.objectives.push(makeObjective(sX, sY));
   }
 }
 
-export function makeStartingObjectives() {
-  const startX = D.width * 1.25;
-  const startY = D.height / 2 - objectiveHeight / 2;
-  for (let i = 0; i < 10; i += 1) {
-    const sX = startX + objectiveWidth * 4 * i;
+export function makeDebugObjectives() {
+  makeStraight(D.width / 2, D.height / 2 - objectiveHeight / 2);
+}
 
-    D.objectives.push(makeObjective(sX, startY));
-  }
+export function makeStartingObjectives() {
+  makeStraight(undefined, D.height / 2 - objectiveHeight / 2);
 }

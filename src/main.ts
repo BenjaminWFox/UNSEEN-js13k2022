@@ -143,10 +143,11 @@ let loop = GameLoop({
       bird.dy += D.maxDyDownChange;
     }
 
-    if (bird.y > D.height - birdWidth) {
+    // this is birdWidth because that is birdHeight * 2
+    if (bird.y > D.maxY) {
       bird.y = D.height - birdWidth;
       bird.dy = 0;
-    } else if (bird.y < birdHeight) {
+    } else if (bird.y < D.minY) {
       bird.y = birdHeight;
       bird.dy = 0;
     }

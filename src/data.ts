@@ -22,6 +22,7 @@ function initData() {
   const ratio = width / baseWidth;
   const maxDyUp = -width / 200;
   const maxDyDown = width / 267;
+  const refWidth = width / 20;
 
   canvas.width = width;
   canvas.height = height;
@@ -31,7 +32,7 @@ function initData() {
     ratio,
     width,
     height,
-    refWidth: width / 20,
+    refWidth,
     maxDyUp: maxDyUp,
     maxDyDown: maxDyDown,
     maxDyUpChange: Math.abs(maxDyUp * 0.05),
@@ -42,9 +43,11 @@ function initData() {
     pickups: 0,
     canvas,
     context,
-    baseSpeed: -2,
+    baseSpeed: -2 * ratio,
     scrollSpeed: -2,
     font: `${32 * ratio}px Arial`,
+    maxY: height - refWidth,
+    minY: refWidth / 2
   };
 }
 
