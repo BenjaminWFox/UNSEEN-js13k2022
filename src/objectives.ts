@@ -16,24 +16,20 @@ export function makeObjective(startX: number, startY: number) {
   });
 }
 
-export function makeStartingObstacles() {
-  const startX1 = D.width / 2;
-  const startY1 = 100 * D.ratio;
-  const startX2 = D.width / 2;
-  const startY2 = 100 * D.ratio;
+export function makeDebugObjectives() {
+  const startX = D.width / 2;
+  const startY = (D.height / 2) - objectiveHeight / 2;
 
   for (let i = 0; i < 10; i += 1) {
-    const sX1 = startX1 + objectiveWidth * 4 * i;
-    const sX2 = startX2 + objectiveWidth * 4 * i;
+    const sX = startX + objectiveWidth * 4 * i;
 
-    D.objectives.push(makeObjective(sX1, startY1));
-    D.objectives.push(makeObjective(sX2, startY2));
+    D.objectives.push(makeObjective(sX, startY));
   }
 }
 
-export function makeObjectiveCollection() {
-  const startX = D.width / 2;
-  const startY = 100 * D.ratio;
+export function makeStartingObjectives() {
+  const startX = D.width * 1.25;
+  const startY = (D.height / 2) - objectiveHeight / 2;
   for (let i = 0; i < 10; i += 1) {
     const sX = startX + objectiveWidth * 4 * i;
 

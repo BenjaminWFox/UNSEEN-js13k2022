@@ -1,6 +1,6 @@
 import { Sprite, GameLoop, initKeys, keyPressed, KText, initPointer, pointerPressed, getPointer } from 'kontra';
 import { data as D } from './data';
-import { makeObjectiveCollection } from './objectives';
+import { makeStartingObjectives, makeDebugObjectives } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 
 initKeys();
@@ -24,7 +24,8 @@ let bird = Sprite({
 // console.log('Data', D);
 // console.log('Bird', bird);
 
-makeObjectiveCollection();
+makeStartingObjectives();
+makeDebugObjectives()
 makeStartingObstacles();
 
 // console.log('Obstacle');
@@ -164,7 +165,10 @@ let loop = GameLoop({
   },
   render: function () {
     // render the game state
+    D.context.fillStyle = 'blue';
     D.context.fillRect(0, 0, D.canvas.width, D.canvas.height);
+    D.context.fillStyle = 'black';
+    D.context.fillRect(0, D.canvas.height / 2, D.canvas.width, 1);
 
     bird.render();
 

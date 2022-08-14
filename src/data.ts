@@ -16,7 +16,6 @@ function initData() {
 
   canvas.width = width;
   canvas.height = height;
-  context.fillStyle = 'blue';
 
   return {
     playing: true,
