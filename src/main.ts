@@ -25,7 +25,7 @@ let bird = Sprite({
 // console.log('Bird', bird);
 
 makeStartingObjectives();
-makeDebugObjectives()
+makeDebugObjectives();
 makeStartingObstacles();
 
 // console.log('Obstacle');

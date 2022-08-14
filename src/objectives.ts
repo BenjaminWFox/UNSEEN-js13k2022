@@ -18,7 +18,7 @@ export function makeObjective(startX: number, startY: number) {
 
 export function makeDebugObjectives() {
   const startX = D.width / 2;
-  const startY = (D.height / 2) - objectiveHeight / 2;
+  const startY = D.height / 2 - objectiveHeight / 2;
 
   for (let i = 0; i < 10; i += 1) {
     const sX = startX + objectiveWidth * 4 * i;
@@ -29,7 +29,7 @@ export function makeDebugObjectives() {
 
 export function makeStartingObjectives() {
   const startX = D.width * 1.25;
-  const startY = (D.height / 2) - objectiveHeight / 2;
+  const startY = D.height / 2 - objectiveHeight / 2;
   for (let i = 0; i < 10; i += 1) {
     const sX = startX + objectiveWidth * 4 * i;
 
