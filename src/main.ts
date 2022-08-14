@@ -10,32 +10,22 @@ console.log('This is my game running!', D.canvas, D.canvas.width, D.canvas.heigh
 
 console.log(D.maxDyUp, D.maxDyDown, D.maxDyUpChange, D.maxDyDownChange);
 
-const birdWidth = D.width / 20;
+console.log('DATA', D);
+
+const birdWidth = D.refWidth;
 const birdHeight = birdWidth / 2;
 let bird = Sprite({
-  x: birdWidth * 3, // starting x,y position of the sprite
-  y: D.height / 2 - birdHeight / 2,
+  x: (birdWidth * 3), // starting x,y position of the sprite
+  y: (D.height / 2 - birdHeight / 2),
   color: 'red', // fill color of the sprite rectangle
   width: birdWidth, // width and height of the sprite rectangle
   height: birdHeight,
-  dy: 0, // move the sprite 2px to the right every frame
+  dy: -20 * D.ratio, // move the sprite 2px to the right every frame
 });
-
-// console.log('Data', D);
-// console.log('Bird', bird);
 
 makeStartingObjectives();
 makeDebugObjectives();
 makeStartingObstacles();
-
-// console.log('Obstacle');
-// console.log('dx', D.obstacles[0].dx);
-// console.log('dy', D.obstacles[0].dy);
-// console.log('x', D.obstacles[0].x);
-// console.log('y', D.obstacles[0].y);
-
-// console.log(D.objectives);
-// console.log(D.obstacles);
 
 const distanceText = KText({
   text: '',
@@ -48,7 +38,8 @@ const distanceText = KText({
 });
 
 function renderStats() {
-  distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups} Speed: ${D.scrollSpeed}`;
+  // distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups} Speed: ${D.scrollSpeed}`;
+  distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups}`;
   distanceText.render();
 }
 
@@ -80,7 +71,6 @@ let loop = GameLoop({
     // update the game state
     D.scrollSpeed = D.baseSpeed + D.baseSpeed * (D.distance / 10000);
     D.distance = Math.round(D.distance - D.scrollSpeed);
-    console.log(D.objectives);
 
     /**
      * Loop to detect collision with Obstacles

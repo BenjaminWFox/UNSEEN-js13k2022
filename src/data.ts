@@ -6,11 +6,20 @@ function initData() {
   /**
    * All settings are initially tested based off a starting width of 1600px
    */
+  let width;
+  let baseWidth;
+  if (window.innerWidth > window.innerHeight * 2) {
+    width = window.innerHeight * 2;
+    console.log('SET WIDTH', width);
+     baseWidth = 1800;
+  } else {
+    width = window.innerWidth
+    console.log('OTHER WIDTH', width)
+    baseWidth = 1600;
+  }
 
-  const baseWidth = 1600;
-  const width = window.innerWidth;
+  const height = width / 2; // > window.innerHeight ? window.innerHeight : width / 2;
   const ratio = width / baseWidth;
-  const height = width / 2 > window.innerHeight ? window.innerHeight : width / 2;
   const maxDyUp = -width / 200;
   const maxDyDown = width / 267;
 
@@ -20,8 +29,8 @@ function initData() {
   return {
     playing: true,
     ratio,
-    width: window.innerWidth,
-    height: width / 2 > window.innerHeight ? window.innerHeight : width / 2,
+    width,
+    height,
     refWidth: width / 20,
     maxDyUp: maxDyUp,
     maxDyDown: maxDyDown,
@@ -33,7 +42,7 @@ function initData() {
     pickups: 0,
     canvas,
     context,
-    baseSpeed: -2 * ratio,
+    baseSpeed: -2,
     scrollSpeed: -2,
     font: `${32 * ratio}px Arial`,
   };
