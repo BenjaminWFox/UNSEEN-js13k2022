@@ -48,6 +48,8 @@ function initData() {
     font: `${32 * ratio}px Arial`,
     maxY: height - refWidth,
     minY: refWidth / 2
+    // maxY: height - (refWidth / 2) - (10 * ratio),
+    // minY: 0 + (10 * ratio)
   };
 }
 
