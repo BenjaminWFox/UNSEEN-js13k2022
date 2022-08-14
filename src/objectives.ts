@@ -1,5 +1,5 @@
 import { Sprite } from 'kontra';
-import { data as D } from './data';
+import { data as D, RND } from './data';
 
 const objectiveWidth = D.refWidth * 0.25;
 const objectiveHeight = objectiveWidth;
@@ -18,10 +18,6 @@ export function makeObjective(startX: number, startY: number) {
     dy: 0, // move the sprite 2px to the right every frame
     dx: D.scrollSpeed,
   });
-}
-
-function RND(min: number, max: number) { // min and max included 
-  return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
 interface SinFn {
@@ -72,22 +68,17 @@ function getRandomFn(): (i: number) => number {
 
 export function makeObjectiveSet(
   initialX?: number,
-  initialY?: number,
   fnToUse?: (index: number) => number
 ) {
-  const adjust = (objectiveHeight * 2.5 * D.ratio)
   const startX = initialX || D.width * 1.25;
-  const startY = initialY || RND(D.minY + adjust, D.maxY - adjust);
-  const offset = objectiveHeight / 2;
 
   const long = 26;
   const short = 21;
 
   const length = Math.random() >= .5 ? long : short;
 
-  let initial = 1
   let randomFn = getRandomFn()
-  for (let i = 0; i < long; i += 1) {
+  for (let i = 0; i < length; i += 1) {
     const sX = startX + objectiveWidth * 2 * i;
     const sY = fnToUse ? fnToUse(i) : randomFn(i);
 
@@ -100,5 +91,5 @@ export function makeDebugObjectives() {
 }
 
 export function makeStartingObjectives() {
-  makeObjectiveSet(undefined, D.height / 2 - objectiveHeight / 2, altSmallRows.function(390));
+  makeObjectiveSet(undefined, altSmallRows.function(390));
 }

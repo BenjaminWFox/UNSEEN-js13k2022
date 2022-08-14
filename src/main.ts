@@ -1,5 +1,5 @@
 import { Sprite, GameLoop, initKeys, keyPressed, KText, initPointer, pointerPressed, getPointer } from 'kontra';
-import { data as D } from './data';
+import { data as D, isCollision, RND } from './data';
 import { makeStartingObjectives, makeDebugObjectives, makeObjectiveSet } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 
@@ -23,7 +23,7 @@ let bird = Sprite({
   dy: -20 * D.ratio, // move the sprite 2px to the right every frame
 });
 
-makeDebugObjectives();
+// makeDebugObjectives();
 makeStartingObjectives();
 makeStartingObstacles();
 
@@ -38,125 +38,150 @@ const distanceText = KText({
 });
 
 function renderStats() {
-  distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups} Speed: ${D.scrollSpeed}`;
-  // distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups}`;
+  // distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups} Speed: ${D.scrollSpeed}`;
+  distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups}`;
   distanceText.render();
 }
 
-function isCollision(sprite: Sprite, beLenient: boolean) {
-  const leniency = beLenient ? 0.5 : 0;
-
-  if (sprite.x > bird.x + bird.width || sprite.x + sprite.width < bird.x + bird.width * leniency) {
-    return false;
-  }
-
-  if (sprite.y + sprite.height < bird.y || sprite.y > bird.y + bird.height) {
-    return false;
-  }
-
-  return true;
-}
-
 function isPickup(sprite: Sprite) {
-  return isCollision(sprite, false);
+  return isCollision(bird, sprite, false);
 }
 
-function isGameOver(sprite: Sprite) {
-  return isCollision(sprite, true);
+function isWindowCollision(sprite: Sprite) {
+  return D.playing && isCollision(bird, sprite, true, -2 * D.ratio);
+}
+
+function updateGameScrolling() {
+  // update the game state
+  if (D.playing) {
+    D.scrollSpeed = D.baseSpeed + (D.baseSpeed * (D.distance / 10000));
+    D.distance += 1
+  } else {
+    if (D.scrollSpeed < 0) {
+      D.scrollSpeed = Math.min(D.scrollSpeed + D.taper, 0);
+    }
+    if (bird.dx > 0) {
+      bird.dx = Math.max(bird.dx - D.taper, 0);
+    }
+  }
+}
+
+function updateObjectives() {
+  /**
+   * Loop to detect pickups w/ objectives
+   */
+  for (let i = 0; i < D.objectives.length; i += 1) {
+    const sprite = D.objectives[i];
+
+    if (sprite.x < 0 - sprite.width) {
+      D.objectives.splice(i, 1);
+      i -= 1;
+
+      continue;
+    }
+
+    if (isPickup(sprite)) {
+      D.pickups += 1;
+
+      D.objectives.splice(i, 1);
+      i -= 1;
+
+      continue;
+    }
+
+    if (sprite.dx !== D.scrollSpeed) {
+      sprite.dx = D.scrollSpeed;
+    }
+
+    sprite.update();
+  }
+
+  if (D.objectives.length && D.objectives.at(-1)!.x < D.width) {
+    makeObjectiveSet();
+  }
+
+}
+
+function updateObstacles() {
+  /**
+   * Loop to detect collision with Obstacles
+   */
+  for (let i = 0; i < D.obstacles.length; i += 1) {
+    const sprite = D.obstacles[i];
+
+    if (sprite.x < 0 - sprite.width) {
+      D.obstacles.splice(i, 1);
+      i -= 1;
+
+      continue;
+    }
+
+    if (isWindowCollision(sprite)) {
+      windowCollision();
+    }
+
+    if (sprite.dx !== D.scrollSpeed) {
+      sprite.dx = D.scrollSpeed;
+    }
+
+    sprite.update();
+  }
+
+  if (D.distance - D.lastObstacleSpawn > 150 && D.distance % 50 === 0) {
+    D.canSpawnObstacle = true
+  }
+
+  if (D.canSpawnObstacle && RND(1, 30) === 30) {
+    D.canSpawnObstacle = false;
+    D.lastObstacleSpawn = D.distance
+
+    makeNewObstacle();
+  }
+
+}
+
+function updateBird() {
+  /**
+ * Move the bird up or down
+ *
+ * Keep the bird between top & bottom canvas bounds
+ *
+ * Update the bird
+ */
+  if (
+    (keyPressed('space')
+      || pointerPressed('left')
+      || (getPointer().touches as any).length > 0)
+    && bird.dy > D.maxDyUp
+    && (D.playing || bird.dx > 2 * D.ratio)
+  ) {
+    bird.dy -= D.maxDyUpChange;
+  } else if (bird.dy < D.maxDyDown) {
+    bird.dy += D.maxDyDownChange;
+  }
+
+  // this is birdWidth because that is birdHeight * 2
+  if (bird.y > D.maxY) {
+    bird.y = D.maxY;
+    bird.dy = 0;
+  } else if (bird.y < D.minY) {
+    bird.y = D.minY;
+    bird.dy = 0;
+  }
+
+  bird.update();
 }
 
 let loop = GameLoop({
   // create the main game loop
   update: function () {
-    // update the game state
-    D.scrollSpeed = D.baseSpeed + (D.baseSpeed * (D.distance / 10000));
-    D.distance += 1
+    updateGameScrolling()
 
-    /**
-     * Loop to detect collision with Obstacles
-     */
-    for (let i = 0; i < D.obstacles.length; i += 1) {
-      const sprite = D.obstacles[i];
+    updateObjectives()
 
-      if (sprite.x < 0 - sprite.width) {
-        D.obstacles.splice(i, 1);
-        i -= 1;
+    updateObstacles()
 
-        continue;
-      }
-
-      if (isGameOver(sprite)) {
-        gameOver();
-
-        continue;
-      }
-
-      if (sprite.dx !== D.scrollSpeed) {
-        sprite.dx = D.scrollSpeed;
-      }
-
-      sprite.update();
-    }
-
-    /**
-     * Loop to detect pickups w/ objectives
-     */
-    for (let i = 0; i < D.objectives.length; i += 1) {
-      const sprite = D.objectives[i];
-
-      if (sprite.x < 0 - sprite.width) {
-        D.objectives.splice(i, 1);
-        i -= 1;
-
-        continue;
-      }
-
-      if (isPickup(sprite)) {
-        D.pickups += 1;
-
-        D.objectives.splice(i, 1);
-        i -= 1;
-
-        continue;
-      }
-
-      if (sprite.dx !== D.scrollSpeed) {
-        sprite.dx = D.scrollSpeed;
-      }
-
-      sprite.update();
-    }
-
-    if (D.objectives.length && D.objectives.at(-1)!.x < D.width) {
-      makeObjectiveSet();
-    }
-
-    /**
-     * Move the bird up or down
-     *
-     * Keep the bird between top & bottom canvas bounds
-     *
-     * Update the bird
-     */
-    if (
-      (keyPressed('space') || pointerPressed('left') || (getPointer().touches as any).length > 0) &&
-      bird.dy > D.maxDyUp
-    ) {
-      bird.dy -= D.maxDyUpChange;
-    } else if (bird.dy < D.maxDyDown) {
-      bird.dy += D.maxDyDownChange;
-    }
-
-    // this is birdWidth because that is birdHeight * 2
-    if (bird.y > D.maxY) {
-      bird.y = D.maxY;
-      bird.dy = 0;
-    } else if (bird.y < D.minY) {
-      bird.y = D.minY;
-      bird.dy = 0;
-    }
-
-    bird.update();
+    updateBird()
   },
   render: function () {
     // render the game state
@@ -179,9 +204,11 @@ let loop = GameLoop({
   },
 });
 
-function gameOver() {
+function windowCollision() {
   D.playing = false;
-  loop.stop();
+  // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
+  bird.dx = D.scrollSpeed;
+  // loop.stop();
 }
 
 export default loop;

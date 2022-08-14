@@ -1,8 +1,10 @@
 import { Sprite } from 'kontra';
-import { data as D } from './data';
+import { data as D, RND, isCollision } from './data';
 
 const obstacleWidth = D.refWidth * 0.25;
 const obstacleHeight = obstacleWidth * 10;
+const obstacleMaxY = D.height - obstacleHeight - (20 * D.ratio);
+const obstacleMinY = 20 * D.ratio
 
 export function makeObstacle(startX: number, startY: number) {
   return Sprite({
@@ -27,8 +29,24 @@ export function makeStartingObstacles() {
 }
 
 export function makeNewObstacle() {
-  // // const startX = D.width - (obstacleWidth * 3);
-  // const startX = D.width * .75;
-  // const startY = D.height / 2 - (obstacleHeight / 2);
-  // D.obstacles.push(makeObstacle(startX, startY))
+  const xPos = D.width + (obstacleWidth * 4 * D.ratio);
+  const yPos = RND(obstacleMinY, obstacleMaxY);
+
+  let obstacle = makeObstacle(xPos, yPos);
+  let isObstructed = false;
+
+  D.objectives.forEach((objective) => {
+    if (isCollision(objective, obstacle, false, (objective.width * .5 * D.ratio))) {
+      console.log('IS COLLIDING', objective.x, objective.y, obstacle.x, obstacle.y);
+      while (isCollision(objective, obstacle, false, (objective.width * .5 * D.ratio))) {
+        obstacle.y -= (20 * D.ratio)
+        console.log('ADJUSTING HEIGHT', obstacle.y);
+        if (obstacle.y < obstacleMinY) {
+          obstacle.y = obstacleMaxY
+        }
+      }
+    }
+  })
+
+  D.obstacles.push(obstacle);
 }
