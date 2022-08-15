@@ -29,18 +29,18 @@ function initData() {
   /**
    * All settings are initially tested based off a starting width of 1600px
    */
-  let width;
+  let width = 1600;
   let baseWidth = 1600;
   if (window.innerWidth > window.innerHeight * 2) {
-    width = window.innerHeight * 2;
+    // width = window.innerHeight * 2;
     console.log('SET WIDTH', width);
   } else {
-    width = window.innerWidth
+    // width = window.innerWidth
     console.log('OTHER WIDTH', width)
   }
 
   const height = width / 2; // > window.innerHeight ? window.innerHeight : width / 2;
-  const ratio = width / baseWidth;
+  const ratio = 1 // width / baseWidth;
   const maxDyUp = -width / 200;
   const maxDyDown = width / 267;
   const refWidth = width / 20;
@@ -48,8 +48,10 @@ function initData() {
   canvas.width = width;
   canvas.height = height;
 
-  return {
-    playing: true,
+  let initialData = {
+    playing: false,
+    menuing: true,
+    ending: false,
     ratio,
     width,
     height,
@@ -72,19 +74,40 @@ function initData() {
     taper: .05 * ratio,
     lastObstacleSpawn: 0,
     canSpawnObstacle: false,
-    // maxY: height - (refWidth / 2) - (10 * ratio),
-    // minY: 0 + (10 * ratio)
-  };
+  }
+
+  return initialData;
 }
 
 let data = {
   ...initData(),
+  setPlaying: () => {},
+  setEnding: () => {},
+  setMenuing: () => {},
 };
 
 function resetData() {
   data = {
     ...initData(),
+    setPlaying: () => {
+      console.log('SIP');
+      data.playing = true;
+      data.ending = false;
+      data.menuing = false;
+    },
+    setEnding: () => {
+      data.playing = false;
+      data.ending = true;
+      data.menuing = false;
+    },
+    setMenuing: () => {
+      data.playing = false;
+      data.ending = false;
+      data.menuing = true;
+    }
   };
 }
+
+resetData();
 
 export { data, resetData };

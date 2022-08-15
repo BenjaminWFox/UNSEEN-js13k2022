@@ -3,10 +3,6 @@ import { data as D, RND } from './data';
 
 const objectiveWidth = D.refWidth * 0.25;
 const objectiveHeight = objectiveWidth;
-let globalFnSettings = {
-  yPos: 0,
-  sinHeight: 0,
-}
 
 export function makeObjective(startX: number, startY: number) {
   return Sprite({
@@ -24,8 +20,6 @@ interface SinFn {
   fn: (i: number, yPos: number) => number;
   yMin: number;
   yMax: number;
-  sMin: number;
-  sMax: number;
 }
 class SinFn {
   constructor(fn: (i: number, yPos: number) => number, yMin: number, yMax: number) {
@@ -78,8 +72,9 @@ export function makeObjectiveSet(
   const length = Math.random() >= .5 ? long : short;
 
   let randomFn = getRandomFn()
-  for (let i = 0; i < length; i += 1) {
-    const sX = startX + objectiveWidth * 2 * i;
+  for (let i = 0; i < short; i += 1) {
+  // for (let i = 0; i < length; i += 1) {
+      const sX = startX + objectiveWidth * 2 * i;
     const sY = fnToUse ? fnToUse(i) : randomFn(i);
 
     D.objectives.push(makeObjective(sX, sY));
@@ -91,5 +86,5 @@ export function makeDebugObjectives() {
 }
 
 export function makeStartingObjectives() {
-  makeObjectiveSet(undefined, altSmallRows.function(390));
+  makeObjectiveSet(D.width * 1.5, altSmallRows.function(390));
 }

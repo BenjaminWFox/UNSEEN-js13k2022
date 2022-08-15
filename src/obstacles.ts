@@ -19,9 +19,9 @@ export function makeObstacle(startX: number, startY: number) {
 }
 
 export function makeStartingObstacles() {
-  const startX1 = D.width * 0.75;
+  const startX1 = D.width;
   const startY1 = D.height / 2 + obstacleHeight / 2;
-  const startX2 = D.width * 1.1;
+  const startX2 = D.width * 1.35;
   const startY2 = D.height / 2 - obstacleHeight * 1.5;
 
   D.obstacles.push(makeObstacle(startX1, startY1));
@@ -37,10 +37,8 @@ export function makeNewObstacle() {
 
   D.objectives.forEach((objective) => {
     if (isCollision(objective, obstacle, false, (objective.width * .5 * D.ratio))) {
-      console.log('IS COLLIDING', objective.x, objective.y, obstacle.x, obstacle.y);
       while (isCollision(objective, obstacle, false, (objective.width * .5 * D.ratio))) {
         obstacle.y -= (20 * D.ratio)
-        console.log('ADJUSTING HEIGHT', obstacle.y);
         if (obstacle.y < obstacleMinY) {
           obstacle.y = obstacleMaxY
         }
