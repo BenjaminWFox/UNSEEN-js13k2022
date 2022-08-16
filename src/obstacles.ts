@@ -3,8 +3,8 @@ import { data as D, RND, isCollision } from './data';
 
 const obstacleWidth = D.refWidth * 0.25;
 const obstacleHeight = obstacleWidth * 10;
-const obstacleMaxY = D.height - obstacleHeight - (20 * D.ratio);
-const obstacleMinY = 20 * D.ratio
+const obstacleMaxY = D.height - obstacleHeight - 20 * D.ratio;
+const obstacleMinY = 20 * D.ratio;
 
 export function makeObstacle(startX: number, startY: number) {
   return Sprite({
@@ -29,22 +29,22 @@ export function makeStartingObstacles() {
 }
 
 export function makeNewObstacle() {
-  const xPos = D.width + (obstacleWidth * 4 * D.ratio);
+  const xPos = D.width + obstacleWidth * 4 * D.ratio;
   const yPos = RND(obstacleMinY, obstacleMaxY);
 
   let obstacle = makeObstacle(xPos, yPos);
   let isObstructed = false;
 
   D.objectives.forEach((objective) => {
-    if (isCollision(objective, obstacle, false, (objective.width * .5 * D.ratio))) {
-      while (isCollision(objective, obstacle, false, (objective.width * .5 * D.ratio))) {
-        obstacle.y -= (20 * D.ratio)
+    if (isCollision(objective, obstacle, false, objective.width * 0.5 * D.ratio)) {
+      while (isCollision(objective, obstacle, false, objective.width * 0.5 * D.ratio)) {
+        obstacle.y -= 20 * D.ratio;
         if (obstacle.y < obstacleMinY) {
-          obstacle.y = obstacleMaxY
+          obstacle.y = obstacleMaxY;
         }
       }
     }
-  })
+  });
 
   D.obstacles.push(obstacle);
 }

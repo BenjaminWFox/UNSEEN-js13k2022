@@ -29,52 +29,72 @@ class SinFn {
   }
 
   function(nonRandom?: number) {
-    const random = nonRandom ? nonRandom : RND(this.yMin, this.yMax)
+    const random = nonRandom ? nonRandom : RND(this.yMin, this.yMax);
 
-    return (i: number) => this.fn(i, random)
+    return (i: number) => this.fn(i, random);
   }
 }
 
-const altSmallRows = new SinFn((i: number, yPos: number) => (yPos * D.ratio) + ((100 * D.ratio) * Math.sin(2 * Math.PI * (i * .5) + 3)), 50, 750)
-const altMedRows = new SinFn((i: number, yPos: number) => (yPos * D.ratio) + ((150 * D.ratio) * Math.sin(2 * Math.PI * (i * .5) + 3)), 50, 750)
-const smallWave = new SinFn((i: number, yPos: number) => (yPos * D.ratio) - ((75 * D.ratio) * Math.sin(2.5 * Math.PI * i * .1 + 3)), 100, 700)
-const medWave = new SinFn((i: number, yPos: number) => (yPos * D.ratio) + ((150 * D.ratio) * Math.sin(2 * Math.PI * (i * .05) + 3)), 170, 610)
-const bigWave = new SinFn((i: number, yPos: number) => (yPos * D.ratio) + ((300 * D.ratio) * Math.sin(2 * Math.PI * (i * .05) + 0)), 320, 450)
-const shortCurve = new SinFn((i: number, yPos: number) => (yPos * D.ratio) + ((150 * D.ratio) * Math.sin(2 * Math.PI * (i * .02) + 3)), 170, 740)
-const bigFish = new SinFn((i: number, yPos: number) => (yPos * D.ratio) + ((150 * D.ratio) * Math.sin(3 * Math.PI * (i * .984) + 0)), 170, 610)
-const smallFish = new SinFn((i: number, yPos: number) => (yPos * D.ratio) + ((50 * D.ratio) * Math.sin(3 * Math.PI * (i * .98) + 0)), 70, 710)
+const altSmallRows = new SinFn(
+  (i: number, yPos: number) => yPos * D.ratio + 100 * D.ratio * Math.sin(2 * Math.PI * (i * 0.5) + 3),
+  50,
+  750
+);
+const altMedRows = new SinFn(
+  (i: number, yPos: number) => yPos * D.ratio + 150 * D.ratio * Math.sin(2 * Math.PI * (i * 0.5) + 3),
+  50,
+  750
+);
+const smallWave = new SinFn(
+  (i: number, yPos: number) => yPos * D.ratio - 75 * D.ratio * Math.sin(2.5 * Math.PI * i * 0.1 + 3),
+  100,
+  700
+);
+const medWave = new SinFn(
+  (i: number, yPos: number) => yPos * D.ratio + 150 * D.ratio * Math.sin(2 * Math.PI * (i * 0.05) + 3),
+  170,
+  610
+);
+const bigWave = new SinFn(
+  (i: number, yPos: number) => yPos * D.ratio + 300 * D.ratio * Math.sin(2 * Math.PI * (i * 0.05) + 0),
+  320,
+  450
+);
+const shortCurve = new SinFn(
+  (i: number, yPos: number) => yPos * D.ratio + 150 * D.ratio * Math.sin(2 * Math.PI * (i * 0.02) + 3),
+  170,
+  740
+);
+const bigFish = new SinFn(
+  (i: number, yPos: number) => yPos * D.ratio + 150 * D.ratio * Math.sin(3 * Math.PI * (i * 0.984) + 0),
+  170,
+  610
+);
+const smallFish = new SinFn(
+  (i: number, yPos: number) => yPos * D.ratio + 50 * D.ratio * Math.sin(3 * Math.PI * (i * 0.98) + 0),
+  70,
+  710
+);
 
-const fns = [
-  altSmallRows,
-  altMedRows,
-  smallWave,
-  medWave,
-  bigWave,
-  shortCurve,
-  bigFish,
-  smallFish,
-]
+const fns = [altSmallRows, altMedRows, smallWave, medWave, bigWave, shortCurve, bigFish, smallFish];
 
 // This will call the SinFn to build a function with a random yPos
 function getRandomFn(): (i: number) => number {
-  return fns[RND(0, fns.length - 1)].function()
+  return fns[RND(0, fns.length - 1)].function();
 }
 
-export function makeObjectiveSet(
-  initialX?: number,
-  fnToUse?: (index: number) => number
-) {
+export function makeObjectiveSet(initialX?: number, fnToUse?: (index: number) => number) {
   const startX = initialX || D.width * 1.25;
 
   const long = 26;
   const short = 21;
 
-  const length = Math.random() >= .5 ? long : short;
+  const length = Math.random() >= 0.5 ? long : short;
 
-  let randomFn = getRandomFn()
+  let randomFn = getRandomFn();
   for (let i = 0; i < short; i += 1) {
-  // for (let i = 0; i < length; i += 1) {
-      const sX = startX + objectiveWidth * 2 * i;
+    // for (let i = 0; i < length; i += 1) {
+    const sX = startX + objectiveWidth * 2 * i;
     const sY = fnToUse ? fnToUse(i) : randomFn(i);
 
     D.objectives.push(makeObjective(sX, sY));

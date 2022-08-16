@@ -1,8 +1,21 @@
-import { Sprite, SpriteSheet, Animation, GameLoop, initKeys, keyPressed, KText, initPointer, pointerPressed, getPointer } from 'kontra';
+import {
+  Sprite,
+  SpriteSheet,
+  Animation,
+  GameLoop,
+  initKeys,
+  keyPressed,
+  KText,
+  initPointer,
+  pointerPressed,
+  getPointer,
+} from 'kontra';
 import { data as D, isCollision, RND } from './data';
 import { makeStartingObjectives, makeObjectiveSet } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 import { BuyButton, FlyButton } from './buttons';
+import bodyImg from './images/body.svg';
+import wingsImg from './images/wings.png';
 
 function setCSSHeightVar() {
   console.log('setting style');
@@ -33,8 +46,8 @@ let bird = Sprite({
 let birdSprite: Sprite;
 let wingSprite: Sprite;
 
-const birdSvg = new Image()
-birdSvg.src = './body.svg'
+const birdSvg = new Image();
+birdSvg.src = bodyImg;
 birdSvg.width = birdWidth;
 birdSvg.height = birdHeight;
 birdSvg.onload = function () {
@@ -42,10 +55,10 @@ birdSvg.onload = function () {
     x: birdWidth * 3,
     y: D.height / 2 - birdHeight / 2,
     image: birdSvg,
-  })
+  });
 
-  const birdSheetSvg = new Image()
-  birdSheetSvg.src = './wings.png'
+  const birdSheetSvg = new Image();
+  birdSheetSvg.src = wingsImg;
   birdSheetSvg.width = 600;
   birdSheetSvg.height = 130;
   birdSheetSvg.onload = function () {
@@ -61,34 +74,34 @@ birdSvg.onload = function () {
         stop: {
           frames: '5',
           frameRate: 1,
-        }
-      }
-    })
+        },
+      },
+    });
     wingSprite = Sprite({
       x: birdWidth * 3.5,
       y: birdSprite.y,
       anchor: { x: 0.5, y: 0.5 },
       animations: spriteSheet.animations,
-    })
-  }
-}
+    });
+  };
+};
 
 function setBirdData(data: Record<string, any>) {
   Object.keys(data).forEach((k) => {
-    bird[k] = data[k]
+    bird[k] = data[k];
 
     if (birdSprite) {
-      birdSprite[k] = data[k]
+      birdSprite[k] = data[k];
     }
 
     if (wingSprite) {
       if (k === 'y' && data.y !== D.maxY && data.y !== D.minY) {
         wingSprite.y = data.y - 200;
       } else {
-        wingSprite[k] = data[k]
+        wingSprite[k] = data[k];
       }
     }
-  })
+  });
 }
 
 // makeDebugObjectives();
@@ -122,14 +135,14 @@ function isWindowCollision(sprite: Sprite) {
 function updateGameScrolling() {
   // update the game state
   if (D.playing) {
-    D.scrollSpeed = D.baseSpeed + (D.baseSpeed * (D.distance / 10000));
-    D.distance += 1
+    D.scrollSpeed = D.baseSpeed + D.baseSpeed * (D.distance / 10000);
+    D.distance += 1;
   } else if (D.ending) {
     if (D.scrollSpeed < 0) {
       D.scrollSpeed = Math.min(D.scrollSpeed + D.taper, 0);
     }
     if (bird.dx > 0) {
-      setBirdData({ dx: Math.max(bird.dx - D.taper, 0) })
+      setBirdData({ dx: Math.max(bird.dx - D.taper, 0) });
       // bird.dx = Math.max(bird.dx - D.taper, 0);
     }
   }
@@ -168,7 +181,6 @@ function updateObjectives() {
   if (D.objectives.length && D.objectives.at(-1)!.x < D.width) {
     makeObjectiveSet();
   }
-
 }
 
 function updateObstacles() {
@@ -197,47 +209,44 @@ function updateObstacles() {
   }
 
   if (D.distance - D.lastObstacleSpawn > 150 && D.distance % 50 === 0) {
-    D.canSpawnObstacle = true
+    D.canSpawnObstacle = true;
   }
 
   if (D.canSpawnObstacle && RND(1, 30) === 30) {
     D.canSpawnObstacle = false;
-    D.lastObstacleSpawn = D.distance
+    D.lastObstacleSpawn = D.distance;
 
     makeNewObstacle();
   }
-
 }
 
 function updateBird() {
   /**
- * Move the bird up or down
- *
- * Keep the bird between top & bottom canvas bounds
- *
- * Update the bird
- */
+   * Move the bird up or down
+   *
+   * Keep the bird between top & bottom canvas bounds
+   *
+   * Update the bird
+   */
   if (
-    (keyPressed('space')
-      || pointerPressed('left')
-      || (getPointer().touches as any).length > 0)
-    && bird.dy > D.maxDyUp
-    && (D.playing || bird.dx > 2 * D.ratio)
+    (keyPressed('space') || pointerPressed('left') || (getPointer().touches as any).length > 0) &&
+    bird.dy > D.maxDyUp &&
+    (D.playing || bird.dx > 2 * D.ratio)
   ) {
     // bird.dy -= D.maxDyUpChange;
-    setBirdData({ dy: bird.dy - D.maxDyUpChange })
+    setBirdData({ dy: bird.dy - D.maxDyUpChange });
   } else if (bird.dy < D.maxDyDown) {
     // bird.dy += D.maxDyDownChange;
-    setBirdData({ dy: bird.dy + D.maxDyDownChange })
+    setBirdData({ dy: bird.dy + D.maxDyDownChange });
   }
 
   // this is birdWidth because that is birdHeight * 2
   if (bird.y > D.maxY) {
-    setBirdData({ y: D.maxY, dy: 0 })
+    setBirdData({ y: D.maxY, dy: 0 });
     // bird.y = D.maxY;
     // bird.dy = 0;
   } else if (bird.y < D.minY) {
-    setBirdData({ y: D.minY, dy: 0 })
+    setBirdData({ y: D.minY, dy: 0 });
     // bird.y = D.minY;
     // bird.dy = 0;
   }
@@ -256,18 +265,17 @@ function updateBird() {
 let loop = GameLoop({
   // create the main game loop
   update: function () {
-    updateGameScrolling()
+    updateGameScrolling();
 
     if (D.playing || D.ending) {
-      updateObjectives()
+      updateObjectives();
 
-      updateObstacles()
+      updateObstacles();
 
-      updateBird()
+      updateBird();
     }
 
     if (D.menuing) {
-
     }
   },
   render: function () {
@@ -303,10 +311,10 @@ let loop = GameLoop({
 });
 
 function windowCollision() {
-  D.setEnding()
+  D.setEnding();
   // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
   // bird.dx = D.scrollSpeed;
-  setBirdData({ dx: D.scrollSpeed })
+  setBirdData({ dx: D.scrollSpeed });
   if (wingSprite) {
     wingSprite.playAnimation('stop');
   }

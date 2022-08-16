@@ -2,20 +2,21 @@ import { init, Sprite } from 'kontra';
 
 let { canvas, context } = init();
 
-export function RND(min: number, max: number) { // min and max included 
-  return Math.floor(Math.random() * (max - min + 1) + min)
+export function RND(min: number, max: number) {
+  // min and max included
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 export function isCollision(spriteA: Sprite, spriteB: Sprite, ignoreBack: boolean, expandArea = 0) {
   const ignore = ignoreBack ? 0.75 : 0;
-  const bIsRightOfA = spriteB.x > spriteA.x + spriteA.width + expandArea
-  const bIsLeftOfA = spriteB.x + spriteB.width < (spriteA.x - expandArea) + (spriteA.width * ignore)
+  const bIsRightOfA = spriteB.x > spriteA.x + spriteA.width + expandArea;
+  const bIsLeftOfA = spriteB.x + spriteB.width < spriteA.x - expandArea + spriteA.width * ignore;
 
   if (bIsRightOfA || bIsLeftOfA) {
     return false;
   }
 
-  const bIsAboveA = spriteB.y + spriteB.height < (spriteA.y - expandArea);
+  const bIsAboveA = spriteB.y + spriteB.height < spriteA.y - expandArea;
   const bIsBelowA = spriteB.y > spriteA.y + spriteA.height + expandArea;
 
   if (bIsAboveA || bIsBelowA) {
@@ -36,11 +37,11 @@ function initData() {
     console.log('SET WIDTH', width);
   } else {
     // width = window.innerWidth
-    console.log('OTHER WIDTH', width)
+    console.log('OTHER WIDTH', width);
   }
 
   const height = width / 2; // > window.innerHeight ? window.innerHeight : width / 2;
-  const ratio = 1 // width / baseWidth;
+  const ratio = 1; // width / baseWidth;
   const maxDyUp = -width / 200;
   const maxDyDown = width / 267;
   const refWidth = width / 20;
@@ -69,12 +70,12 @@ function initData() {
     baseSpeed: -7 * ratio,
     scrollSpeed: -3,
     font: `${32 * ratio}px Arial`,
-    maxY: height - refWidth + (20 * ratio),
-    minY: (refWidth / 2) - (20 * ratio),
-    taper: .05 * ratio,
+    maxY: height - refWidth + 20 * ratio,
+    minY: refWidth / 2 - 20 * ratio,
+    taper: 0.05 * ratio,
     lastObstacleSpawn: 0,
     canSpawnObstacle: false,
-  }
+  };
 
   return initialData;
 }
@@ -104,7 +105,7 @@ function resetData() {
       data.playing = false;
       data.ending = false;
       data.menuing = true;
-    }
+    },
   };
 }
 
