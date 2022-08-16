@@ -14,7 +14,7 @@ import { data as D, isCollision, RND } from './data';
 import { makeStartingObjectives, makeObjectiveSet } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 import { BuyButton, FlyButton } from './buttons';
-import bodyImg from './images/body.svg';
+import bodyImg from './images/body.png';
 import wingsImg from './images/wings.png';
 
 function setCSSHeightVar() {
