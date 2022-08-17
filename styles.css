@@ -1,7 +1,10 @@
 #c {
     width: 100vw;
     outline: 0;
-    image-rendering: pixelated; /* You definitely want this if you are doing pixel art */
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
 
 /* Get rid of any margins, set background black, use flexbox to center */

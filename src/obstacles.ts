@@ -1,7 +1,7 @@
 import { Sprite } from 'kontra';
 import { data as D, RND, isCollision } from './data';
 
-const obstacleWidth = D.refWidth * 0.25;
+const obstacleWidth = 15;
 const obstacleHeight = obstacleWidth * 10;
 const obstacleMaxY = D.height - obstacleHeight - 20 * D.ratio;
 const obstacleMinY = 20 * D.ratio;
@@ -33,7 +33,6 @@ export function makeNewObstacle() {
   const yPos = RND(obstacleMinY, obstacleMaxY);
 
   let obstacle = makeObstacle(xPos, yPos);
-  let isObstructed = false;
 
   D.objectives.forEach((objective) => {
     if (isCollision(objective, obstacle, false, objective.width * 0.5 * D.ratio)) {

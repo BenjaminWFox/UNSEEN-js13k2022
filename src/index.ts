@@ -1,7 +1,6 @@
 import {
   Sprite,
   SpriteSheet,
-  Animation,
   GameLoop,
   initKeys,
   keyPressed,
@@ -11,11 +10,10 @@ import {
   getPointer,
 } from 'kontra';
 import { data as D, isCollision, RND } from './data';
-import { makeStartingObjectives, makeObjectiveSet } from './objectives';
+import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 import { BuyButton, FlyButton } from './buttons';
-import bodyImg from './images/body.png';
-import wingsImg from './images/wings.png';
+import crowPixelSprite from './images/crow-pixel-sprite.png';
 
 function setCSSHeightVar() {
   console.log('setting style');
@@ -32,74 +30,59 @@ setCSSHeightVar();
 initKeys();
 initPointer();
 
-const birdWidth = 100; // D.refWidth;
-const birdHeight = birdWidth / 4;
+const birdWidth = 65;
+const birdHeight = 65;
+const birdX = 200
 let bird = Sprite({
-  x: birdWidth * 3,
-  y: D.height / 2 - birdHeight / 2,
+  x: birdX,
+  y: D.height / 2,
   // color: 'red',
   width: birdWidth,
-  height: birdHeight,
-  dy: -20 * D.ratio,
+  height: birdHeight / 4,
+  dy: -17
 });
 
-let birdSprite: Sprite;
-let wingSprite: Sprite;
+let crowSprite: Sprite;
 
-const birdSvg = new Image();
-birdSvg.src = bodyImg;
-birdSvg.width = birdWidth;
-birdSvg.height = birdHeight;
-birdSvg.onload = function () {
-  birdSprite = Sprite({
-    x: birdWidth * 3,
-    y: D.height / 2 - birdHeight / 2,
-    image: birdSvg,
+const crowPng = new Image();
+crowPng.src = crowPixelSprite
+crowPng.width = 650;
+crowPng.height = 65;
+crowPng.onload = function () {
+  
+  let spriteSheet = SpriteSheet({
+    image: crowPng,
+    frameWidth: 65,
+    frameHeight: 65,
+    animations: {
+      fly: {
+        frames: '0..9',
+        frameRate: 30,
+      },
+      stop: {
+        frames: '1',
+        frameRate: 1,
+      },
+    },
   });
 
-  const birdSheetSvg = new Image();
-  birdSheetSvg.src = wingsImg;
-  birdSheetSvg.width = 600;
-  birdSheetSvg.height = 130;
-  birdSheetSvg.onload = function () {
-    let spriteSheet = SpriteSheet({
-      image: birdSheetSvg,
-      frameWidth: 100,
-      frameHeight: 130,
-      animations: {
-        fly: {
-          frames: '0..5',
-          frameRate: 30,
-        },
-        stop: {
-          frames: '5',
-          frameRate: 1,
-        },
-      },
-    });
-    wingSprite = Sprite({
-      x: birdWidth * 3.5,
-      y: birdSprite.y,
-      anchor: { x: 0.5, y: 0.5 },
-      animations: spriteSheet.animations,
-    });
-  };
+  crowSprite = Sprite({
+    x: birdX,
+    y: bird.y - D.hitboxOffset,
+    animations: spriteSheet.animations,
+  });
+
+  loop.start();
 };
 
 function setBirdData(data: Record<string, any>) {
   Object.keys(data).forEach((k) => {
     bird[k] = data[k];
 
-    if (birdSprite) {
-      birdSprite[k] = data[k];
-    }
-
-    if (wingSprite) {
-      if (k === 'y' && data.y !== D.maxY && data.y !== D.minY) {
-        wingSprite.y = data.y - 200;
-      } else {
-        wingSprite[k] = data[k];
-      }
+    if (k === 'y') {
+      crowSprite.y = data.y - D.hitboxOffset;
+    } else {
+      crowSprite[k] = data[k]
     }
   });
 }
@@ -112,8 +95,8 @@ const distanceText = KText({
   text: '',
   font: `${D.font}`,
   color: 'white',
-  x: 20 * D.ratio,
-  y: 20 * D.ratio,
+  x: 20,
+  y: 20,
   textAlign: 'left',
   anchor: { x: 0, y: 0 },
 });
@@ -129,7 +112,7 @@ function isPickup(sprite: Sprite) {
 }
 
 function isWindowCollision(sprite: Sprite) {
-  return D.playing && isCollision(bird, sprite, true, -2 * D.ratio);
+  return D.playing && isCollision(bird, sprite, true, -2);
 }
 
 function updateGameScrolling() {
@@ -208,11 +191,11 @@ function updateObstacles() {
     sprite.update();
   }
 
-  if (D.distance - D.lastObstacleSpawn > 150 && D.distance % 50 === 0) {
+  if (D.distance - D.lastObstacleSpawn > 50 && D.distance % 25 === 0) {
     D.canSpawnObstacle = true;
   }
 
-  if (D.canSpawnObstacle && RND(1, 30) === 30) {
+  if (D.canSpawnObstacle && RND(1, 40) === 40) {
     D.canSpawnObstacle = false;
     D.lastObstacleSpawn = D.distance;
 
@@ -231,7 +214,7 @@ function updateBird() {
   if (
     (keyPressed('space') || pointerPressed('left') || (getPointer().touches as any).length > 0) &&
     bird.dy > D.maxDyUp &&
-    (D.playing || bird.dx > 2 * D.ratio)
+    (D.playing || bird.dx > 2)
   ) {
     // bird.dy -= D.maxDyUpChange;
     setBirdData({ dy: bird.dy - D.maxDyUpChange });
@@ -251,15 +234,8 @@ function updateBird() {
     // bird.dy = 0;
   }
 
-  // birdSprite.dy = bird.dy;
-  // birdSprite.y = bird.y;
   bird.update();
-  if (birdSprite) {
-    birdSprite.update();
-  }
-  if (wingSprite) {
-    wingSprite.update();
-  }
+  crowSprite.update();
 }
 
 let loop = GameLoop({
@@ -286,12 +262,7 @@ let loop = GameLoop({
     // D.context.fillRect(0, D.canvas.height / 2, D.canvas.width, 1);
 
     bird.render();
-    if (birdSprite) {
-      birdSprite.render();
-    }
-    if (wingSprite) {
-      wingSprite.render();
-    }
+    crowSprite.render();
 
     D.objectives.forEach((objective) => {
       objective.render();
@@ -315,12 +286,8 @@ function windowCollision() {
   // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
   // bird.dx = D.scrollSpeed;
   setBirdData({ dx: D.scrollSpeed });
-  if (wingSprite) {
-    wingSprite.playAnimation('stop');
-  }
-  // birdSprite.dx = bird.dx;
+  crowSprite.playAnimation('stop');
   // loop.stop();
 }
 
 D.setPlaying();
-export default loop.start();

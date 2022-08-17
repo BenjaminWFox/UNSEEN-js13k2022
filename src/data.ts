@@ -30,21 +30,11 @@ function initData() {
   /**
    * All settings are initially tested based off a starting width of 1600px
    */
-  let width = 1600;
-  let baseWidth = 1600;
-  if (window.innerWidth > window.innerHeight * 2) {
-    // width = window.innerHeight * 2;
-    console.log('SET WIDTH', width);
-  } else {
-    // width = window.innerWidth
-    console.log('OTHER WIDTH', width);
-  }
-
-  const height = width / 2; // > window.innerHeight ? window.innerHeight : width / 2;
-  const ratio = 1; // width / baseWidth;
-  const maxDyUp = -width / 200;
-  const maxDyDown = width / 267;
-  const refWidth = width / 20;
+  let width = canvas.width;
+  const height = canvas.height;
+  const ratio = 1;
+  const maxDyUp = -width / 190;
+  const maxDyDown = width / 250;
 
   canvas.width = width;
   canvas.height = height;
@@ -56,25 +46,25 @@ function initData() {
     ratio,
     width,
     height,
-    refWidth,
     maxDyUp: maxDyUp,
     maxDyDown: maxDyDown,
-    maxDyUpChange: Math.abs(maxDyUp * 0.05),
-    maxDyDownChange: Math.abs(maxDyUp * 0.1),
+    maxDyUpChange: Math.abs(maxDyUp * 0.08),
+    maxDyDownChange: Math.abs(maxDyUp * 0.13),
     objectives: [] as Array<Sprite>,
     obstacles: [] as Array<Sprite>,
     distance: 1,
     pickups: 0,
     canvas,
     context,
-    baseSpeed: -7 * ratio,
+    baseSpeed: -7,
     scrollSpeed: -3,
-    font: `${32 * ratio}px Arial`,
-    maxY: height - refWidth + 20 * ratio,
-    minY: refWidth / 2 - 20 * ratio,
-    taper: 0.05 * ratio,
+    font: `${32}px Arial`,
+    maxY: height - 30,
+    minY: 30,
+    taper: 0.05,
     lastObstacleSpawn: 0,
     canSpawnObstacle: false,
+    hitboxOffset: 30,
   };
 
   return initialData;
