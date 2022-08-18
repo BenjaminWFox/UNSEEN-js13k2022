@@ -13,7 +13,8 @@ import { data as D, isCollision, RND } from './data';
 import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 import { BuyButton, FlyButton } from './buttons';
-import crowPixelSprite from './images/crow-pixel-sprite.png';
+import crowPixelSprite from './images/crow.png';
+import tinyCrowPixelSprite from './images/tiny-crow.png';
 
 function setCSSHeightVar() {
   console.log('setting style');
@@ -42,8 +43,42 @@ let bird = Sprite({
   dy: -17
 });
 
+/* Crow Pixel Tiny Sprite
 let crowSprite: Sprite;
+const crowPng = new Image();
+crowPng.src = tinyCrowPixelSprite
+crowPng.width = 150;
+crowPng.height = 13;
+crowPng.onload = function () {
+  
+  let spriteSheet = SpriteSheet({
+    image: crowPng,
+    frameWidth: 15,
+    frameHeight: 13,
+    animations: {
+      fly: {
+        frames: '0..9',
+        frameRate: 60,
+      },
+      stop: {
+        frames: '1',
+        frameRate: 1,
+      },
+    },
+  });
 
+  crowSprite = Sprite({
+    x: birdX,
+    y: bird.y - D.hitboxOffset,
+    animations: spriteSheet.animations,
+  });
+
+  loop.start();
+};
+*/
+
+/* Crow Pixel Sprite Large */
+let crowSprite: Sprite;
 const crowPng = new Image();
 crowPng.src = crowPixelSprite
 crowPng.width = 650;
@@ -75,14 +110,15 @@ crowPng.onload = function () {
   loop.start();
 };
 
+
 function setBirdData(data: Record<string, any>) {
   Object.keys(data).forEach((k) => {
-    bird[k] = data[k];
-
     if (k === 'y') {
       crowSprite.y = data.y - D.hitboxOffset;
+      bird.y = data.y;
     } else {
       crowSprite[k] = data[k]
+      bird[k] = data[k];
     }
   });
 }
@@ -256,7 +292,7 @@ let loop = GameLoop({
   },
   render: function () {
     // render the game state
-    D.context.fillStyle = 'blue';
+    D.context.fillStyle = '#cccccc';
     D.context.fillRect(0, 0, D.canvas.width, D.canvas.height);
     // D.context.fillStyle = 'black';
     // D.context.fillRect(0, D.canvas.height / 2, D.canvas.width, 1);
