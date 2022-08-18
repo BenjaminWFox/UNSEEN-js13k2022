@@ -14,7 +14,6 @@ import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives } from '.
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 import { BuyButton, FlyButton } from './buttons';
 import crowPixelSprite from './images/crow.png';
-import tinyCrowPixelSprite from './images/tiny-crow.png';
 
 function setCSSHeightVar() {
   console.log('setting style');
@@ -42,40 +41,6 @@ let bird = Sprite({
   height: birdHeight / 4,
   dy: -17
 });
-
-/* Crow Pixel Tiny Sprite
-let crowSprite: Sprite;
-const crowPng = new Image();
-crowPng.src = tinyCrowPixelSprite
-crowPng.width = 150;
-crowPng.height = 13;
-crowPng.onload = function () {
-  
-  let spriteSheet = SpriteSheet({
-    image: crowPng,
-    frameWidth: 15,
-    frameHeight: 13,
-    animations: {
-      fly: {
-        frames: '0..9',
-        frameRate: 60,
-      },
-      stop: {
-        frames: '1',
-        frameRate: 1,
-      },
-    },
-  });
-
-  crowSprite = Sprite({
-    x: birdX,
-    y: bird.y - D.hitboxOffset,
-    animations: spriteSheet.animations,
-  });
-
-  loop.start();
-};
-*/
 
 /* Crow Pixel Sprite Large */
 let crowSprite: Sprite;
