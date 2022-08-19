@@ -1,18 +1,19 @@
 import { Sprite } from 'kontra';
+import { dollarImg } from './sprites';
 import { data as D, RND } from './data';
 
-const objectiveWidth = 15;
-const objectiveHeight = objectiveWidth;
+const objectiveWidth = 24;
+const objectiveHeight = 12;
 
 export function makeObjective(startX: number, startY: number) {
   return Sprite({
     x: startX, // starting x,y position of the sprite
     y: startY,
-    color: 'yellow', // fill color of the sprite rectangle
     width: objectiveWidth, // width and height of the sprite rectangle
     height: objectiveHeight,
     dy: 0, // move the sprite 2px to the right every frame
     dx: D.scrollSpeed,
+    image: dollarImg,
   });
 }
 

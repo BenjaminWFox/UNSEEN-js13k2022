@@ -13,7 +13,7 @@ import { data as D, isCollision, RND } from './data';
 import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 import { BuyButton, FlyButton } from './buttons';
-import crowPixelSprite from './images/crow.png';
+import { makeSprites, bird, crowSprite } from './sprites';
 
 function setCSSHeightVar() {
   console.log('setting style');
@@ -30,52 +30,6 @@ setCSSHeightVar();
 initKeys();
 initPointer();
 
-const birdWidth = 65;
-const birdHeight = 65;
-const birdX = 200
-let bird = Sprite({
-  x: birdX,
-  y: D.height / 2,
-  // color: 'red',
-  width: birdWidth,
-  height: birdHeight / 4,
-  dy: -17
-});
-
-/* Crow Pixel Sprite Large */
-let crowSprite: Sprite;
-const crowPng = new Image();
-crowPng.src = crowPixelSprite
-crowPng.width = 650;
-crowPng.height = 65;
-crowPng.onload = function () {
-  
-  let spriteSheet = SpriteSheet({
-    image: crowPng,
-    frameWidth: 65,
-    frameHeight: 65,
-    animations: {
-      fly: {
-        frames: '0..9',
-        frameRate: 30,
-      },
-      stop: {
-        frames: '1',
-        frameRate: 1,
-      },
-    },
-  });
-
-  crowSprite = Sprite({
-    x: birdX,
-    y: bird.y - D.hitboxOffset,
-    animations: spriteSheet.animations,
-  });
-
-  loop.start();
-};
-
-
 function setBirdData(data: Record<string, any>) {
   Object.keys(data).forEach((k) => {
     if (k === 'y') {
@@ -87,10 +41,6 @@ function setBirdData(data: Record<string, any>) {
     }
   });
 }
-
-// makeDebugObjectives();
-makeStartingObjectives();
-makeStartingObstacles();
 
 const distanceText = KText({
   text: '',
@@ -182,7 +132,7 @@ function updateObstacles() {
     }
 
     if (isWindowCollision(sprite)) {
-      windowCollision();
+      windowCollision(sprite);
     }
 
     if (sprite.dx !== D.scrollSpeed) {
@@ -256,9 +206,18 @@ let loop = GameLoop({
     }
   },
   render: function () {
-    // render the game state
-    D.context.fillStyle = '#cccccc';
-    D.context.fillRect(0, 0, D.canvas.width, D.canvas.height);
+    // Create gradient
+    // var grd = D.context.createLinearGradient(D.canvas.width / 2, 0,  D.canvas.width / 2, D.canvas.height);
+    // grd.addColorStop(0, "black");
+    // grd.addColorStop(1, "blue");
+    // D.context.fillStyle = grd;
+    // D.context.fillRect(0, 0, D.canvas.width, D.canvas.height);
+
+    // Fill with solid
+    // D.context.fillStyle = 'indigo';
+    // D.context.fillRect(0, 0, D.canvas.width, D.canvas.height);
+
+    // render the debug line
     // D.context.fillStyle = 'black';
     // D.context.fillRect(0, D.canvas.height / 2, D.canvas.width, 1);
 
@@ -282,13 +241,25 @@ let loop = GameLoop({
   },
 });
 
-function windowCollision() {
+function windowCollision(sprite: Sprite) {
   D.setEnding();
   // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
   // bird.dx = D.scrollSpeed;
   setBirdData({ dx: D.scrollSpeed });
+  console.log('END', sprite);
+  console.log('END Crow', crowSprite);
+  sprite.playAnimation('break');
   crowSprite.playAnimation('stop');
   // loop.stop();
 }
 
 D.setPlaying();
+
+function startGame() {
+  makeStartingObjectives();
+  makeStartingObstacles();
+
+  loop.start()
+}
+
+makeSprites(startGame);

@@ -1,21 +1,27 @@
 import { Sprite } from 'kontra';
 import { data as D, RND, isCollision } from './data';
+import { windowSheet } from './sprites';
 
-const obstacleWidth = 15;
-const obstacleHeight = obstacleWidth * 10;
+const obstacleWidth = 45;
+const obstacleHeight = 155;
 const obstacleMaxY = D.height - obstacleHeight - 20 * D.ratio;
 const obstacleMinY = 20 * D.ratio;
 
 export function makeObstacle(startX: number, startY: number) {
-  return Sprite({
+  const s = Sprite({
     x: startX, // starting x,y position of the sprite
     y: startY,
-    color: 'teal', // fill color of the sprite rectangle
+    // color: 'teal', // fill color of the sprite rectangle
     width: obstacleWidth, // width and height of the sprite rectangle
     height: obstacleHeight,
     dy: 0, // move the sprite 2px to the right every frame
     dx: D.scrollSpeed,
+    animations: windowSheet?.animations,
   });
+
+  s.playAnimation('whole');
+
+  return s;
 }
 
 export function makeStartingObstacles() {
