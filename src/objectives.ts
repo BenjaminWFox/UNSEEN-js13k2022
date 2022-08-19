@@ -1,12 +1,12 @@
 import { Sprite } from 'kontra';
 import { dollarImg } from './sprites';
-import { data as D, RND } from './data';
+import { CSprite, data as D, RND } from './data';
 
 const objectiveWidth = 24;
 const objectiveHeight = 12;
 
 export function makeObjective(startX: number, startY: number) {
-  return Sprite({
+  return new CSprite({
     x: startX, // starting x,y position of the sprite
     y: startY,
     width: objectiveWidth, // width and height of the sprite rectangle
@@ -14,6 +14,7 @@ export function makeObjective(startX: number, startY: number) {
     dy: 0, // move the sprite 2px to the right every frame
     dx: D.scrollSpeed,
     image: dollarImg,
+    enabled: true,
   });
 }
 

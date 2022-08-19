@@ -9,7 +9,7 @@ import {
   pointerPressed,
   getPointer,
 } from 'kontra';
-import { data as D } from './data';
+import { CSprite, data as D } from './data';
 import crowRawImage from './images/crow.png';
 import dollarRawImage from './images/dollar.png';
 import windowRawImage from './images/window-sprite.png';
@@ -17,8 +17,8 @@ import windowRawImage from './images/window-sprite.png';
 const loaded = [];
 const totalLoads = 3;
 
-let bird: Sprite;
-let crowSprite: Sprite;
+let bird: CSprite;
+let crowSprite: CSprite;
 let dollarImg: HTMLImageElement;
 let windowImg: HTMLImageElement;
 let windowSheet: SpriteSheet;
@@ -36,13 +36,14 @@ function makeSprites(startFn: () => void) {
   }
 
 
-  bird = Sprite({
+  bird = new CSprite({
     x: birdX,
     y: D.height / 2,
     // color: 'red',
     width: birdWidth,
     height: birdHeight / 4,
-    dy: -17
+    dy: -17,
+    enabled: true,
   });
 
   /* Crow Pixel Sprite Large */
@@ -67,10 +68,11 @@ function makeSprites(startFn: () => void) {
       },
     });
 
-    crowSprite = Sprite({
+    crowSprite = new CSprite({
       x: birdX,
       y: bird.y - D.hitboxOffset,
       animations: spriteSheet.animations,
+      enabled: true,
     });
 
     checkLoaded(crowImg)

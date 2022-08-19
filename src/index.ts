@@ -9,7 +9,7 @@ import {
   pointerPressed,
   getPointer,
 } from 'kontra';
-import { data as D, isCollision, RND } from './data';
+import { CSprite, data as D, isCollision, RND } from './data';
 import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 import { BuyButton, FlyButton } from './buttons';
@@ -58,18 +58,18 @@ function renderStats() {
   distanceText.render();
 }
 
-function isPickup(sprite: Sprite) {
+function isPickup(sprite: CSprite) {
   return isCollision(bird, sprite, false);
 }
 
-function isWindowCollision(sprite: Sprite) {
+function isWindowCollision(sprite: CSprite) {
   return D.playing && isCollision(bird, sprite, true, -2);
 }
 
 function updateGameScrolling() {
   // update the game state
   if (D.playing) {
-    D.scrollSpeed = D.baseSpeed + D.baseSpeed * (D.distance / 10000);
+    D.scrollSpeed = D.baseSpeed + D.baseSpeed * (D.distance / 5000);
     D.distance += 1;
   } else if (D.ending) {
     if (D.scrollSpeed < 0) {
@@ -132,7 +132,7 @@ function updateObstacles() {
     }
 
     if (isWindowCollision(sprite)) {
-      windowCollision(sprite);
+      windowCollision(sprite, i);
     }
 
     if (sprite.dx !== D.scrollSpeed) {
@@ -221,7 +221,6 @@ let loop = GameLoop({
     // D.context.fillStyle = 'black';
     // D.context.fillRect(0, D.canvas.height / 2, D.canvas.width, 1);
 
-    bird.render();
     crowSprite.render();
 
     D.objectives.forEach((objective) => {
@@ -232,6 +231,8 @@ let loop = GameLoop({
       obstacle.render();
     });
 
+    bird.render();
+
     renderStats();
 
     if (D.menuing) {
@@ -241,15 +242,19 @@ let loop = GameLoop({
   },
 });
 
-function windowCollision(sprite: Sprite) {
-  D.setEnding();
+function windowCollision(sprite: CSprite, index: number) {
   // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
   // bird.dx = D.scrollSpeed;
-  setBirdData({ dx: D.scrollSpeed });
-  console.log('END', sprite);
-  console.log('END Crow', crowSprite);
   sprite.playAnimation('break');
-  crowSprite.playAnimation('stop');
+  
+  if (D.powerups.life > 0) {
+    D.powerups.life -= 1;
+    sprite.enabled = false;
+  } else {
+    D.setEnding();
+    setBirdData({ dx: D.scrollSpeed });
+    crowSprite.playAnimation('stop');
+  }
   // loop.stop();
 }
 

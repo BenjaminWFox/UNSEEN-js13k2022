@@ -1,5 +1,5 @@
 import { Sprite } from 'kontra';
-import { data as D, RND, isCollision } from './data';
+import { data as D, RND, isCollision, CSprite } from './data';
 import { windowSheet } from './sprites';
 
 const obstacleWidth = 45;
@@ -8,7 +8,7 @@ const obstacleMaxY = D.height - obstacleHeight - 20 * D.ratio;
 const obstacleMinY = 20 * D.ratio;
 
 export function makeObstacle(startX: number, startY: number) {
-  const s = Sprite({
+  const s = new CSprite({
     x: startX, // starting x,y position of the sprite
     y: startY,
     // color: 'teal', // fill color of the sprite rectangle
@@ -17,6 +17,7 @@ export function makeObstacle(startX: number, startY: number) {
     dy: 0, // move the sprite 2px to the right every frame
     dx: D.scrollSpeed,
     animations: windowSheet?.animations,
+    enabled: true,
   });
 
   s.playAnimation('whole');

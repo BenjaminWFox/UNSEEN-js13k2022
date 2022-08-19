@@ -1,5 +1,15 @@
-import { init, Sprite } from 'kontra';
+import { init, Sprite, SpriteClass } from 'kontra';
 
+export interface CSprite extends Sprite {
+  enabled: boolean;
+}
+
+export class CSprite extends SpriteClass {
+  constructor(properties: Record<string, any>) {
+    super(properties);
+    this.enabled = properties.enabled === false || true;
+  }
+}
 let { canvas, context } = init();
 
 export function RND(min: number, max: number) {
@@ -7,7 +17,11 @@ export function RND(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-export function isCollision(spriteA: Sprite, spriteB: Sprite, ignoreBack: boolean, expandArea = 0) {
+export function isCollision(spriteA: CSprite, spriteB: CSprite, ignoreBack: boolean, expandArea = 0) {
+  if (!spriteA.enabled || !spriteB.enabled) {
+    return false;
+  }
+
   const ignore = ignoreBack ? 0.75 : 0;
   const bIsRightOfA = spriteB.x > spriteA.x + spriteA.width + expandArea;
   const bIsLeftOfA = spriteB.x + spriteB.width < spriteA.x - expandArea + spriteA.width * ignore;
@@ -50,8 +64,8 @@ function initData() {
     maxDyDown: maxDyDown,
     maxDyUpChange: Math.abs(maxDyUp * 0.08),
     maxDyDownChange: Math.abs(maxDyUp * 0.13),
-    objectives: [] as Array<Sprite>,
-    obstacles: [] as Array<Sprite>,
+    objectives: [] as Array<CSprite>,
+    obstacles: [] as Array<CSprite>,
     distance: 1,
     pickups: 0,
     canvas,
@@ -65,6 +79,9 @@ function initData() {
     lastObstacleSpawn: 0,
     canSpawnObstacle: false,
     hitboxOffset: 30,
+    powerups: {
+      life: 0,
+    }
   };
 
   return initialData;
