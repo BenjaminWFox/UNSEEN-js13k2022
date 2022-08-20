@@ -1,4 +1,4 @@
-import dollar from './images/dollar-outline.png';
+import { dollarImg } from './sprites';
 import { getStats, setStats } from './data'
 
 interface Item {
@@ -28,12 +28,15 @@ export const items = [
 ]
 
 export function setAvailable() {
+  console.log('dollarImg', dollarImg)
+
   const available = document.getElementById('available');
 
   if (available) {
     const money = getStats().money;
 
-    available.innerHTML = `You have ${money} <img src="${dollar}" /> available!`
+    available.innerHTML = `You have ${money} <span id="available-img"></span> available!`
+    document.getElementById('available-img')?.appendChild(dollarImg.cloneNode());
   }
 }
 
@@ -42,7 +45,6 @@ export function setupStore() {
   const wrapper = document.getElementById('items');
   const buy = document.getElementById('buy');
   const img = document.createElement('img');
-  img.src = dollar;
 
   // setStats({money: 10000})
 
@@ -95,7 +97,7 @@ export function setupStore() {
           buy.innerHTML = `${item.desc} You already own this!`
         } else {
           buy.innerHTML = `${item.desc} Click here to buy for ${item.cost}`
-          buy.appendChild(img);
+          buy.appendChild(dollarImg);
         }
         btn.id = item.id;
         btn.style.border = '1px #fff solid';
