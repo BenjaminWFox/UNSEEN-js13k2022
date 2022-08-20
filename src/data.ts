@@ -87,7 +87,6 @@ function initData() {
   const ratio = 1;
   const maxDyUp = -width / 250; // 200 for agility?
   const maxDyDown = width / 250;
-  const stats = getStats();
 
   canvas.width = width;
   canvas.height = height;

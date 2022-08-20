@@ -1,6 +1,5 @@
 import {
   Sprite,
-  SpriteSheet,
   GameLoop,
   initKeys,
   keyPressed,
@@ -10,9 +9,9 @@ import {
   getPointer,
 } from 'kontra';
 import { CSprite, data as D, getStats, isCollision, resetData, RND, setStats } from './data';
-import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives, makeDisplayObjective } from './objectives';
+import { makeStartingObjectives, makeObjectiveSet, makeDisplayObjective } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
-import { makeSprites, bird, crowSprite, dollarImg, makeTinybird } from './sprites';
+import { makeSprites, bird, crowSprite, makeTinybird } from './sprites';
 import { zzfx } from './zzfx';
 import { setAvailable, setupStore } from './store';
 
@@ -201,7 +200,7 @@ function updateObstacles() {
     }
 
     if (isWindowCollision(sprite)) {
-      windowCollision(sprite, i);
+      windowCollision(sprite);
     }
 
     if (sprite.dx !== D.scrollSpeed) {
@@ -223,7 +222,7 @@ function updateObstacles() {
   }
 }
 
-function windowCollision(sprite: CSprite, index: number) {
+function windowCollision(sprite: CSprite) {
   // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
   // bird.dx = D.scrollSpeed;
   sprite.playAnimation('break');
@@ -362,7 +361,7 @@ function startGame() {
 
   loop.start()
 
-  makeDebugObjectives();
+  // makeDebugObjectives();
   makeStartingObjectives();
   makeStartingObstacles();
 

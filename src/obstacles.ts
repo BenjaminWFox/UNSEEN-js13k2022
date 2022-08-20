@@ -1,4 +1,3 @@
-import { Sprite } from 'kontra';
 import { data as D, RND, isCollision, CSprite } from './data';
 import { windowSheet } from './sprites';
 

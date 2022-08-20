@@ -1,4 +1,3 @@
-import { Sprite } from 'kontra';
 import { dollarImg } from './sprites';
 import { CSprite, data as D, RND } from './data';
 
@@ -19,7 +18,8 @@ export function makeObjective(startX: number, startY: number) {
 }
 
 // Original hardcoded values all based on 1600 canvas height. Now changed to 1200
-const mod = .75;
+// const mod = .75;
+const mod = 1;
 
 interface SinFn {
   fn: (i: number, yPos: number) => number;

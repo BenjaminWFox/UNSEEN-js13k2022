@@ -1,4 +1,3 @@
-import { setAudioPath } from "kontra";
 import dollar from './images/dollar-outline.png';
 import { getStats, setStats } from './data'
 
@@ -104,8 +103,4 @@ export function setupStore() {
       wrapper.appendChild(btn);
     })
   }
-}
-
-function purchase() {
-
 }

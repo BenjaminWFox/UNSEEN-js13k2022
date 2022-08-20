@@ -1,5 +1,4 @@
 import {
-  Sprite,
   SpriteSheet,
 } from 'kontra';
 import { CSprite, data as D } from './data';
