@@ -21,11 +21,11 @@ class Item {
 }
 
 export const items = [
-  new Item('neck', 'Neck Brace', 'Adds 1 extra life per round!', 200, false),
-  new Item('steel', 'Steel Tipped Beak', 'Adds 2 extra lives per round!', 500, false),
-  new Item('ordinance', 'Influence City Ordinances', 'Mandate high-viz coating! 50% chance to avoid windows.', 1500, false),
-  new Item('sabotage', 'Sabotage Glass Supply', 'Easy-break glass! 50% chance to avoid death.', 2000, false),
-  new Item('agile', 'Agility Training', 'Better, stronger, faster! More responsive bird.', 4000, false),
+  new Item('neck', 'Neck Brace', 'Adds 1 extra life per round!', 100, false),
+  new Item('steel', 'Steel Tipped Beak', 'Adds 2 extra lives per round!', 200, false),
+  new Item('money', 'Money Magnet', 'Much larger pickup radius!', 500, false),
+  new Item('agile', 'Agility Training', 'Better, stronger, faster! More responsive bird.', 800, false),
+  new Item('sabotage', 'Sabotage Glass Supply', 'Easy-break glass! 50% chance to avoid death.', 1500, false),
 ]
 
 export function setAvailable() {
@@ -45,7 +45,7 @@ export function setupStore() {
   const img = document.createElement('img');
   img.src = dollar;
 
-  setStats({money: 10000})
+  // setStats({money: 10000})
 
   if (wrapper && buy) {
     buy.addEventListener('click', (e) => {
@@ -95,7 +95,7 @@ export function setupStore() {
         if (owned) {
           buy.innerHTML = `${item.desc} You already own this!`
         } else {
-          buy.innerHTML = `${item.desc} Click to buy for ${item.cost}`
+          buy.innerHTML = `${item.desc} Click here to buy for ${item.cost}`
           buy.appendChild(img);
         }
         btn.id = item.id;

@@ -13,7 +13,17 @@ import { CSprite, data as D, getStats, isCollision, resetData, RND, setStats } f
 import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives, makeDisplayObjective } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 import { makeSprites, bird, crowSprite, dollarImg, makeTinybird } from './sprites';
+import { zzfx } from './zzfx';
 import { setAvailable, setupStore } from './store';
+
+const sounds = {
+  pickup: () => zzfx(...[.25,,4,.01,,.09,1,1.39,-41,-1.7,,,,,3,,.01,.41,.04]),
+  flap: () => zzfx(...[.05,,562,.04,,.07,4,.26,6.4,,88,.22,,,4.8,.2,,.26,.01]),
+  breakOuch: () => zzfx(...[.5,0,222,.02,.1,.11,4,.45,-1.5,,,,,2,,.2,,.61,.2,.11]),
+  breakMiss: () => zzfx(...[.5,,150,,.08,.13,4,2.84,.1,,,,.07,1.7,,.1,.09,.8,.08,.2]),
+  miss: () => zzfx(...[.5,,259,.04,.06,.09,,.25,12,,,,,.7,,,,.86,.1]),
+  end: () => zzfx(...[1,0,5,,.28,.07,2,.17,,,,,.01,.4,,.9,.15,.24,.07,.05])
+}
 
 let displayDollar: Sprite;
 let displayBird: CSprite;
@@ -116,7 +126,7 @@ function renderStats() {
 }
 
 function isPickup(sprite: CSprite) {
-  return isCollision(bird, sprite, false);
+  return isCollision(bird, sprite, false, D.powerups.money);
 }
 
 function isWindowCollision(sprite: CSprite) {
@@ -158,6 +168,8 @@ function updateObjectives() {
 
       D.objectives.splice(i, 1);
       i -= 1;
+
+      sounds.pickup();
 
       continue;
     }
@@ -216,19 +228,28 @@ function windowCollision(sprite: CSprite, index: number) {
   // bird.dx = D.scrollSpeed;
   sprite.playAnimation('break');
 
-  if (D.powerups.life > 0) {
+  if (D.powerups.sabotage && RND(0, 9) >= 5) {
+    console.log('Not today!');
+    sounds.breakMiss();
+    sprite.enabled = false;
+  } else if (D.powerups.life > 0) {
+    console.log('Oh, ouch!');
     D.powerups.life -= 1;
     sprite.enabled = false;
+    sounds.breakMiss();
   } else {
+    console.log('Ahh dangit!');
     D.setEnding();
     setBirdData({ dx: D.scrollSpeed / 5 });
     crowSprite.playAnimation('hit');
+    sounds.breakOuch();
   }
 }
 
 function endCurrentRun() {
   const stats = getStats();
   crowSprite.playAnimation('stop');
+  sounds.end();
   setStats({
     money: stats.money + D.pickups,
     highScore: D.distance,
@@ -237,6 +258,7 @@ function endCurrentRun() {
   D.setMenuing();
 }
 
+let frameTrack = 0
 function updateBird() {
   /**
    * Move the bird up or down
@@ -270,6 +292,15 @@ function updateBird() {
 
   if (D.ending && bird.y === D.maxY) {
     endCurrentRun();
+  }
+
+  if (D.playing) {
+    if (frameTrack === 20) {
+      sounds.flap();
+      frameTrack = 0;
+    } else {
+      frameTrack += 1
+    }
   }
 
   bird.update();
@@ -331,6 +362,7 @@ function startGame() {
 
   loop.start()
 
+  makeDebugObjectives();
   makeStartingObjectives();
   makeStartingObstacles();
 
@@ -339,4 +371,5 @@ function startGame() {
 }
 
 setupStore();
-makeSprites(startGame);
+makeSprites();
+// makeSprites(startGame);

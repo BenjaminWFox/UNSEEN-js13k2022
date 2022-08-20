@@ -108,7 +108,7 @@ function initData() {
     obstacles: [] as Array<CSprite>,
     birdStartX: 300,
     birdStartY: height / 2,
-    birdStartDy: -14,
+    birdStartDy: -12,
     distance: 1,
     pickups: 0,
     canvas,
@@ -124,6 +124,9 @@ function initData() {
     hitboxOffset: 30,
     powerups: {
       life: 0,
+      money: 0,
+      agile: false,
+      sabotage: false,
     },
   };
 
@@ -175,6 +178,22 @@ function resetData() {
   }
   if (stats.purchases.steel) {
     data.powerups.life += 2
+  }
+  if (stats.purchases.money) {
+    data.powerups.money = 20;
+  }
+  if (stats.purchases.sabotage) {
+    console.log('GLASS!')
+    data.powerups.sabotage = true;
+  }
+  if (stats.purchases.agile) {
+    console.log('AGILE!');
+    data.powerups.agile = true;
+    data.maxDyUp = -data.width / 150;
+    data.maxDyDown = data.width / 150;
+    data.maxDyUpChange = Math.abs(data.maxDyUp * 0.025);
+    data.maxDyDownChange = Math.abs(data.maxDyUp * 0.025);
+    data.birdStartDy = -10;
   }
 }
 
