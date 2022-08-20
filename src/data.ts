@@ -1,5 +1,43 @@
 import { init, Sprite, SpriteClass } from 'kontra';
 
+interface Stats {
+    money: number;
+    highScore: number;
+    purchases: Record<string, string>;
+}
+
+const stats: Stats = {
+  money: 0,
+  highScore: 0,
+  purchases: {},
+}
+
+export function getStats(): Stats {
+  const result = JSON.parse(window.localStorage.getItem('js13k22-unseen-stats') || JSON.stringify(stats));
+
+  console.log('GOT STATS', result);
+
+  return result;
+}
+
+export function setStats(statsToSet: Partial<Stats>) {
+  const current = getStats();
+
+  current.money = statsToSet?.money || current.money;
+  current.highScore = statsToSet.highScore && statsToSet.highScore > current.highScore ? statsToSet.highScore : current.highScore;
+  
+  if (statsToSet.purchases) {
+    current.purchases = {
+      ...current.purchases,
+      ...statsToSet.purchases,
+    }
+  }
+  
+  console.log('SETTING STATS', current);
+
+  window.localStorage.setItem('js13k22-unseen-stats', JSON.stringify(current));
+}
+
 export interface CSprite extends Sprite {
   enabled: boolean;
 }
@@ -47,8 +85,9 @@ function initData() {
   let width = canvas.width;
   const height = canvas.height;
   const ratio = 1;
-  const maxDyUp = -width / 190;
+  const maxDyUp = -width / 250; // 200 for agility?
   const maxDyDown = width / 250;
+  const stats = getStats();
 
   canvas.width = width;
   canvas.height = height;
@@ -57,18 +96,19 @@ function initData() {
     playing: false,
     menuing: true,
     ending: false,
+    shopping: false,
     ratio,
     width,
     height,
     maxDyUp: maxDyUp,
     maxDyDown: maxDyDown,
-    maxDyUpChange: Math.abs(maxDyUp * 0.08),
-    maxDyDownChange: Math.abs(maxDyUp * 0.08),
+    maxDyUpChange: Math.abs(maxDyUp * 0.05),
+    maxDyDownChange: Math.abs(maxDyUp * 0.05),
     objectives: [] as Array<CSprite>,
     obstacles: [] as Array<CSprite>,
     birdStartX: 300,
     birdStartY: height / 2,
-    birdStartDy: -17,
+    birdStartDy: -14,
     distance: 1,
     pickups: 0,
     canvas,
@@ -84,7 +124,7 @@ function initData() {
     hitboxOffset: 30,
     powerups: {
       life: 0,
-    }
+    },
   };
 
   return initialData;
@@ -95,9 +135,12 @@ let data = {
   setPlaying: () => {},
   setEnding: () => {},
   setMenuing: () => {},
+  setShopping: () => {},
 };
 
 function resetData() {
+  const stats = getStats();
+
   data = {
     ...initData(),
     setPlaying: () => {
@@ -105,18 +148,34 @@ function resetData() {
       data.playing = true;
       data.ending = false;
       data.menuing = false;
+      data.shopping = false;
     },
     setEnding: () => {
       data.playing = false;
       data.ending = true;
       data.menuing = false;
+      data.shopping = false;
     },
     setMenuing: () => {
       data.playing = false;
       data.ending = false;
       data.menuing = true;
+      data.shopping = false;
+    },
+    setShopping: () => {
+      data.playing = false;
+      data.ending = false;
+      data.menuing = false;
+      data.shopping = true;
     },
   };
+
+  if (stats.purchases.neck) {
+    data.powerups.life += 1
+  }
+  if (stats.purchases.steel) {
+    data.powerups.life += 2
+  }
 }
 
 resetData();

@@ -20,7 +20,11 @@ export function makeObstacle(startX: number, startY: number) {
     enabled: true,
   });
 
-  s.playAnimation('whole');
+  if (s) {
+    s.playAnimation('whole');
+  } else {
+    console.log('S not found O.o', s);
+  }
 
   return s;
 }

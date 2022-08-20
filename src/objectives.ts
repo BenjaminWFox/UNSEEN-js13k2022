@@ -2,8 +2,8 @@ import { Sprite } from 'kontra';
 import { dollarImg } from './sprites';
 import { CSprite, data as D, RND } from './data';
 
-const objectiveWidth = 24;
-const objectiveHeight = 12;
+const objectiveWidth = 30;
+const objectiveHeight = 14;
 
 export function makeObjective(startX: number, startY: number) {
   return new CSprite({
@@ -113,6 +113,10 @@ export function makeObjectiveSet(initialX?: number, fnToUse?: (index: number) =>
 
     D.objectives.push(makeObjective(sX, sY));
   }
+}
+
+export function makeDisplayObjective() {
+  return makeObjective(25, 54);
 }
 
 export function makeDebugObjectives() {

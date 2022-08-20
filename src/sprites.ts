@@ -1,16 +1,19 @@
 import {
+  Sprite,
   SpriteSheet,
 } from 'kontra';
 import { CSprite, data as D } from './data';
 import crowRawImage from './images/crow-outline.png';
-import dollarRawImage from './images/dollar.png';
-import windowRawImage from './images/window-sprite.png';
+import dollarRawImage from './images/dollar-outline.png';
+import windowRawImage from './images/window-outline.png';
+import tinyBirdImage from './images/tiny-bird.png';
 
 const loaded = [];
-const totalLoads = 3;
+const totalLoads = 4;
 
 let bird: CSprite;
 let crowSprite: CSprite;
+let tinyBirdImg: HTMLImageElement;
 let dollarImg: HTMLImageElement;
 let windowImg: HTMLImageElement;
 let windowSheet: SpriteSheet;
@@ -19,11 +22,11 @@ const birdWidth = 65;
 const birdHeight = 65;
 const birdX = D.birdStartX;
 
-function makeSprites() {
+function makeSprites(startFn?: () => void) {
   function checkLoaded(loadedImage: HTMLImageElement) {
     loaded.push(loadedImage)
-    if (loaded.length === totalLoads) {
-      // startFn();
+    if (loaded.length === totalLoads && startFn) {
+      startFn();
     }
   }
 
@@ -55,11 +58,9 @@ function makeSprites() {
         },
         stop: {
           frames: '3',
-          frameRate: 1,
         },
         hit: {
           frames: '0',
-          frameRate: 1,
         }
       },
     });
@@ -76,10 +77,18 @@ function makeSprites() {
 
   dollarImg = new Image();
   dollarImg.src = dollarRawImage;
-  dollarImg.width = 24
-  dollarImg.height = 12
+  dollarImg.width = 30
+  dollarImg.height = 14
   dollarImg.onload = function () {
     checkLoaded(dollarImg)
+  }
+
+  tinyBirdImg = new Image();
+  tinyBirdImg.src = tinyBirdImage;
+  tinyBirdImg.width = 30
+  tinyBirdImg.height = 14
+  tinyBirdImg.onload = function () {
+    checkLoaded(tinyBirdImg)
   }
 
   windowImg = new Image();
@@ -106,6 +115,17 @@ function makeSprites() {
 
     checkLoaded(windowImg)
   }
+}
+
+export function makeTinybird() {
+  return new CSprite({
+    image: tinyBirdImg,
+    x: 25,
+    y: 76,
+    width: 30,
+    height: 14,
+    enabled: true,
+  })
 }
 
 export {

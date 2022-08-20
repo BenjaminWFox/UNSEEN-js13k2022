@@ -21,18 +21,24 @@ html, body {
     font-style: italic;
 }
 
-h1, h2 {
+h1, h2, h3 {
     -webkit-text-stroke: 1px white;
 }
 h1 {
     text-align: center;
     font-size: 14vw;
-    margin: .25em 0 .15em 0;
+    margin: .1em 0 0 0;
 }
 
 h2 {
     text-align: center;
     font-size: 5vw;
+    margin: 0 0 .05em 0;
+}
+
+h3 {
+    text-align: center;
+    font-size: 2.75vw;
     margin: .1em 0 .1em 0;
 }
 
@@ -49,8 +55,61 @@ button:hover {
     cursor: pointer;
 }
 
-button:active {
+button:active, #available {
     color: #fff;
+}
+
+#items {
+    margin-top: 1em;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    overflow: scroll;
+}
+
+#store {
+    /* display: none; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#available {
+    font-size: 1vw;
+}
+
+#buy, #available {
+    color: #fff;
+    vertical-align: middle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    padding: .5em;
+}
+
+#buy {
+    margin-top: 1em;
+}
+
+#buy img, #available img {
+    margin: .2em .5em 0;
+}
+
+button.item {
+    color: #fff;
+    border: 1px solid #fff;
+    width: 6em;
+    height: 6em;
+    margin: 0 2em;
+    flex-grow: 1;
+}
+
+button.item.owned {
+    border: 1px solid #ccc;
+    color: #ccc;
+    text-decoration: line-through;
 }
 
 /* Input whatever aspect ratio you use here */
@@ -90,7 +149,37 @@ button:active {
     justify-content: center;
 }
 
+#store {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+}
+
 #separator {
     margin: 0 2.5em;
     border-left: 1px white solid;
 }
+
+.storeList {
+    width: 40%;
+}
+
+p {
+    text-align: center;
+    color: #fff;
+    font-size: 1.75vw;
+}
+
+
+@media (orientation:landscape) {
+    h1 {
+        font-size: 14vh;
+    }
+    h2 {
+        font-size: 6vh;
+    }
+    #available {
+        font-size: 3vh;
+    }
+}
+

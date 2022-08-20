@@ -9,15 +9,22 @@ import {
   pointerPressed,
   getPointer,
 } from 'kontra';
-import { CSprite, data as D, isCollision, resetData, RND } from './data';
-import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives } from './objectives';
+import { CSprite, data as D, getStats, isCollision, resetData, RND, setStats } from './data';
+import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives, makeDisplayObjective } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
-import { makeSprites, bird, crowSprite } from './sprites';
+import { makeSprites, bird, crowSprite, dollarImg, makeTinybird } from './sprites';
+import { setAvailable, setupStore } from './store';
+
+let displayDollar: Sprite;
+let displayBird: CSprite;
 
 function setCSSHeightVar() {
   const screens = document.getElementById('wrapper');
   if (screens) {
-    screens.style.left = '0';
+    screens.style.maxWidth = `${D.canvas.offsetWidth}px`
+    screens.style.minWidth = `${D.canvas.offsetWidth}px`
+    screens.style.height = `${D.canvas.offsetHeight}px`
+    screens.style.left = `${D.canvas.offsetLeft}`;
     screens.style.top = `${D.canvas.offsetTop}px`;
   }
 
@@ -25,18 +32,24 @@ function setCSSHeightVar() {
   document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
 
-function showMenu(doShow: boolean) {
-  const wrapper = document.getElementById('wrapper');
-  if (wrapper) {
-    wrapper.style.display = doShow ? 'block' : 'none';
+function showElement(elId: string, doShow: boolean, displayType = 'block') {
+  const el = document.getElementById(elId);
+  if (el) {
+    el.style.display = doShow ? displayType : 'none';
   }
 }
 
 function setDomStuff() {
   const playBtn = document.getElementById('playBtn');
+  const shopBtn = document.getElementById('shopBtn');
   playBtn?.addEventListener('click', () => {
-    showMenu(false)
     startGame()
+  })
+  shopBtn?.addEventListener('click', () => {
+    D.setShopping();
+    D.context.clearRect(0, 0, D.canvas.width, D.canvas.height);
+    showElement('store', true, 'flex');
+    setAvailable();
   })
 }
 
@@ -71,10 +84,35 @@ const distanceText = KText({
   anchor: { x: 0, y: 0 },
 });
 
+const moneyText = KText({
+  text: '',
+  font: `20px Arial`,
+  color: 'white',
+  x: 60,
+  y: 52,
+  textAlign: 'left',
+  anchor: { x: 0, y: 0 },
+});
+
+const livesText = KText({
+  text: '0',
+  font: `20px Arial`,
+  color: 'white',
+  x: 60,
+  y: 75,
+  textAlign: 'left',
+  anchor: { x: 0, y: 0 },
+});
+
 function renderStats() {
-  // distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups} Speed: ${D.scrollSpeed}`;
-  distanceText.text = `Distance: ${D.distance} Pickups: ${D.pickups}`;
+  distanceText.text = `${String(D.distance).padStart(5, '0')}m`;
+  moneyText.text = `${D.pickups}`;
+  livesText.text = D.powerups.life.toString();
   distanceText.render();
+  moneyText.render();
+  displayDollar.render();
+  livesText.render();
+  displayBird.render();
 }
 
 function isPickup(sprite: CSprite) {
@@ -173,6 +211,32 @@ function updateObstacles() {
   }
 }
 
+function windowCollision(sprite: CSprite, index: number) {
+  // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
+  // bird.dx = D.scrollSpeed;
+  sprite.playAnimation('break');
+
+  if (D.powerups.life > 0) {
+    D.powerups.life -= 1;
+    sprite.enabled = false;
+  } else {
+    D.setEnding();
+    setBirdData({ dx: D.scrollSpeed / 5 });
+    crowSprite.playAnimation('hit');
+  }
+}
+
+function endCurrentRun() {
+  const stats = getStats();
+  crowSprite.playAnimation('stop');
+  setStats({
+    money: stats.money + D.pickups,
+    highScore: D.distance,
+  })
+  showElement('wrapper', true)
+  D.setMenuing();
+}
+
 function updateBird() {
   /**
    * Move the bird up or down
@@ -182,37 +246,30 @@ function updateBird() {
    * Update the bird
    */
   if (
-    (keyPressed('space') || pointerPressed('left') || (getPointer().touches as any).length > 0) &&
-    bird.dy > D.maxDyUp &&
+    (keyPressed('space') || pointerPressed('left') || (getPointer().touches as any).length > 0)
+    && bird.dy > D.maxDyUp &&
     (D.playing || bird.dx > 2)
   ) {
-    // bird.dy -= D.maxDyUpChange;
     setBirdData({ dy: bird.dy - D.maxDyUpChange });
   } else if (bird.dy < D.maxDyDown) {
-    // bird.dy += D.maxDyDownChange;
     setBirdData({ dy: bird.dy + D.maxDyDownChange });
   }
 
-  // this is birdWidth because that is birdHeight * 2
   if (bird.y > D.maxY) {
     setBirdData({ y: D.maxY, dy: 0 });
-    // bird.y = D.maxY;
-    // bird.dy = 0;
   } else if (bird.y < D.minY) {
     setBirdData({ y: D.minY, dy: 0 });
-    // bird.y = D.minY;
-    // bird.dy = 0;
   }
 
   if (bird.dx < 0) {
     bird.dx += .011;
   } else {
     bird.dx = 0;
+    bird.x = Math.round(bird.x);
   }
 
   if (D.ending && bird.y === D.maxY) {
-    console.log(bird.y, D.maxY)
-    crowSprite.playAnimation('stop');
+    endCurrentRun();
   }
 
   bird.update();
@@ -236,56 +293,29 @@ let loop = GameLoop({
     }
   },
   render: function () {
-    // Create gradient
-    // var grd = D.context.createLinearGradient(D.canvas.width / 2, 0,  D.canvas.width / 2, D.canvas.height);
-    // grd.addColorStop(0, "black");
-    // grd.addColorStop(1, "blue");
-    // D.context.fillStyle = grd;
-    // D.context.fillRect(0, 0, D.canvas.width, D.canvas.height);
+    if (!D.shopping) {
 
-    // Fill with solid
-    // D.context.fillStyle = 'indigo';
-    // D.context.fillRect(0, 0, D.canvas.width, D.canvas.height);
+      crowSprite.render();
 
-    // render the debug line
-    // D.context.fillStyle = 'black';
-    // D.context.fillRect(0, D.canvas.height / 2, D.canvas.width, 1);
+      D.objectives.forEach((objective) => {
+        objective.render();
+      });
 
-    crowSprite.render();
+      D.obstacles.forEach((obstacle) => {
+        obstacle.render();
+      });
 
-    D.objectives.forEach((objective) => {
-      objective.render();
-    });
+      bird.render();
 
-    D.obstacles.forEach((obstacle) => {
-      obstacle.render();
-    });
-
-    bird.render();
-
-    renderStats();
+      renderStats();
+    }
   },
 });
 
-function windowCollision(sprite: CSprite, index: number) {
-  // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
-  // bird.dx = D.scrollSpeed;
-  sprite.playAnimation('break');
-  
-  if (D.powerups.life > 0) {
-    D.powerups.life -= 1;
-    sprite.enabled = false;
-  } else {
-    D.setEnding();
-    showMenu(true)
-
-    setBirdData({ dx: D.scrollSpeed / 5 });
-    crowSprite.playAnimation('hit');
-  }
-  // loop.stop();
-}
-
 function startGame() {
+  showElement('wrapper', false)
+  showElement('store', false)
+
   resetData();
 
   setBirdData({
@@ -299,10 +329,14 @@ function startGame() {
 
   D.setPlaying();
 
+  loop.start()
+
   makeStartingObjectives();
   makeStartingObstacles();
 
-  loop.start()
+  displayDollar = makeDisplayObjective();
+  displayBird = makeTinybird();
 }
 
-makeSprites();
+setupStore();
+makeSprites(startGame);
