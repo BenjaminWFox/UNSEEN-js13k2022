@@ -6,6 +6,7 @@
     image-rendering: pixelated;
     image-rendering: crisp-edges;
     border: 1px #fff solid;
+    font-size: 10px;
 }
 
 /* Get rid of any margins, set background black, use flexbox to center */
@@ -16,7 +17,40 @@ html, body {
     justify-content: center;
     align-items: center;
     height: 100%;
-    background-image: linear-gradient(#001667, #0036e6);
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-style: italic;
+}
+
+h1, h2 {
+    -webkit-text-stroke: 1px white;
+}
+h1 {
+    text-align: center;
+    font-size: 14vw;
+    margin: .25em 0 .15em 0;
+}
+
+h2 {
+    text-align: center;
+    font-size: 5vw;
+    margin: .1em 0 .1em 0;
+}
+
+button {
+    background: none;
+    border: none;
+    font-size: inherit;
+    font-family: inherit;
+    font-style: inherit;
+}
+
+button:hover {
+    -webkit-text-stroke: 2px white;
+    cursor: pointer;
+}
+
+button:active {
+    color: #fff;
 }
 
 /* Input whatever aspect ratio you use here */
@@ -26,4 +60,37 @@ html, body {
         height: calc(var(--vh, 1vh) * 100);
         width: auto;
     }
+}
+
+#wrapper {
+    position: absolute;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    width: 100%;
+}
+
+#screens {
+    position: absolute;
+}
+
+.screen {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#menu {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#separator {
+    margin: 0 2.5em;
+    border-left: 1px white solid;
 }

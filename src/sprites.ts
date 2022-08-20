@@ -1,16 +1,8 @@
 import {
-  Sprite,
   SpriteSheet,
-  GameLoop,
-  initKeys,
-  keyPressed,
-  KText,
-  initPointer,
-  pointerPressed,
-  getPointer,
 } from 'kontra';
 import { CSprite, data as D } from './data';
-import crowRawImage from './images/crow.png';
+import crowRawImage from './images/crow-outline.png';
 import dollarRawImage from './images/dollar.png';
 import windowRawImage from './images/window-sprite.png';
 
@@ -25,24 +17,24 @@ let windowSheet: SpriteSheet;
 
 const birdWidth = 65;
 const birdHeight = 65;
-const birdX = 200
+const birdX = D.birdStartX;
 
-function makeSprites(startFn: () => void) {
+function makeSprites() {
   function checkLoaded(loadedImage: HTMLImageElement) {
     loaded.push(loadedImage)
     if (loaded.length === totalLoads) {
-      startFn();
+      // startFn();
     }
   }
 
 
   bird = new CSprite({
-    x: birdX,
-    y: D.height / 2,
+    x: D.birdStartX,
+    y: D.birdStartY,
     // color: 'red',
     width: birdWidth,
     height: birdHeight / 4,
-    dy: -17,
+    dy: D.birdStartDy,
     enabled: true,
   });
 
@@ -62,9 +54,13 @@ function makeSprites(startFn: () => void) {
           frameRate: 30,
         },
         stop: {
-          frames: '0',
+          frames: '3',
           frameRate: 1,
         },
+        hit: {
+          frames: '0',
+          frameRate: 1,
+        }
       },
     });
 

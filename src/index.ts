@@ -9,16 +9,35 @@ import {
   pointerPressed,
   getPointer,
 } from 'kontra';
-import { CSprite, data as D, isCollision, RND } from './data';
+import { CSprite, data as D, isCollision, resetData, RND } from './data';
 import { makeStartingObjectives, makeObjectiveSet, makeDebugObjectives } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
-import { BuyButton, FlyButton } from './buttons';
 import { makeSprites, bird, crowSprite } from './sprites';
 
 function setCSSHeightVar() {
-  console.log('setting style');
+  const screens = document.getElementById('wrapper');
+  if (screens) {
+    screens.style.left = '0';
+    screens.style.top = `${D.canvas.offsetTop}px`;
+  }
+
   let vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
+}
+
+function showMenu(doShow: boolean) {
+  const wrapper = document.getElementById('wrapper');
+  if (wrapper) {
+    wrapper.style.display = doShow ? 'block' : 'none';
+  }
+}
+
+function setDomStuff() {
+  const playBtn = document.getElementById('playBtn');
+  playBtn?.addEventListener('click', () => {
+    showMenu(false)
+    startGame()
+  })
 }
 
 window.addEventListener('resize', () => {
@@ -26,7 +45,7 @@ window.addEventListener('resize', () => {
 });
 
 setCSSHeightVar();
-
+setDomStuff();
 initKeys();
 initPointer();
 
@@ -185,6 +204,17 @@ function updateBird() {
     // bird.dy = 0;
   }
 
+  if (bird.dx < 0) {
+    bird.dx += .011;
+  } else {
+    bird.dx = 0;
+  }
+
+  if (D.ending && bird.y === D.maxY) {
+    console.log(bird.y, D.maxY)
+    crowSprite.playAnimation('stop');
+  }
+
   bird.update();
   crowSprite.update();
 }
@@ -234,11 +264,6 @@ let loop = GameLoop({
     bird.render();
 
     renderStats();
-
-    if (D.menuing) {
-      FlyButton.render();
-      BuyButton.render();
-    }
   },
 });
 
@@ -252,19 +277,32 @@ function windowCollision(sprite: CSprite, index: number) {
     sprite.enabled = false;
   } else {
     D.setEnding();
-    setBirdData({ dx: D.scrollSpeed });
-    crowSprite.playAnimation('stop');
+    showMenu(true)
+
+    setBirdData({ dx: D.scrollSpeed / 5 });
+    crowSprite.playAnimation('hit');
   }
   // loop.stop();
 }
 
-D.setPlaying();
-
 function startGame() {
+  resetData();
+
+  setBirdData({
+    x: D.birdStartX,
+    y: D.birdStartY,
+    dy: D.birdStartDy,
+    dx: 0,
+  })
+
+  crowSprite.playAnimation('fly');
+
+  D.setPlaying();
+
   makeStartingObjectives();
   makeStartingObstacles();
 
   loop.start()
 }
 
-makeSprites(startGame);
+makeSprites();
