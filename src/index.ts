@@ -1,13 +1,4 @@
-import {
-  Sprite,
-  GameLoop,
-  initKeys,
-  keyPressed,
-  KText,
-  initPointer,
-  pointerPressed,
-  getPointer,
-} from 'kontra';
+import { Sprite, GameLoop, initKeys, keyPressed, KText, initPointer, pointerPressed, getPointer } from 'kontra';
 import { CSprite, data as D, getStats, isCollision, resetData, RND, setStats } from './data';
 import { makeStartingObjectives, makeObjectiveSet, makeDisplayObjective } from './objectives';
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
@@ -16,13 +7,13 @@ import { zzfx } from './zzfx';
 import { setAvailable, setupStore } from './store';
 
 const sounds = {
-  pickup: () => zzfx(...[.25,,4,.01,,.09,1,1.39,-41,-1.7,,,,,3,,.01,.41,.04]),
-  flap: () => zzfx(...[.05,,562,.04,,.07,4,.26,6.4,,88,.22,,,4.8,.2,,.26,.01]),
-  breakOuch: () => zzfx(...[.5,0,222,.02,.1,.11,4,.45,-1.5,,,,,2,,.2,,.61,.2,.11]),
-  breakMiss: () => zzfx(...[.5,,150,,.08,.13,4,2.84,.1,,,,.07,1.7,,.1,.09,.8,.08,.2]),
-  miss: () => zzfx(...[.5,,259,.04,.06,.09,,.25,12,,,,,.7,,,,.86,.1]),
-  end: () => zzfx(...[1,0,5,,.28,.07,2,.17,,,,,.01,.4,,.9,.15,.24,.07,.05])
-}
+  pickup: () => zzfx(...[0.25, , 4, 0.01, , 0.09, 1, 1.39, -41, -1.7, , , , , 3, , 0.01, 0.41, 0.04]),
+  flap: () => zzfx(...[0.05, , 562, 0.04, , 0.07, 4, 0.26, 6.4, , 88, 0.22, , , 4.8, 0.2, , 0.26, 0.01]),
+  breakOuch: () => zzfx(...[0.5, 0, 222, 0.02, 0.1, 0.11, 4, 0.45, -1.5, , , , , 2, , 0.2, , 0.61, 0.2, 0.11]),
+  breakMiss: () => zzfx(...[0.5, , 150, , 0.08, 0.13, 4, 2.84, 0.1, , , , 0.07, 1.7, , 0.1, 0.09, 0.8, 0.08, 0.2]),
+  miss: () => zzfx(...[0.5, , 259, 0.04, 0.06, 0.09, , 0.25, 12, , , , , 0.7, , , , 0.86, 0.1]),
+  end: () => zzfx(...[1, 0, 5, , 0.28, 0.07, 2, 0.17, , , , , 0.01, 0.4, , 0.9, 0.15, 0.24, 0.07, 0.05]),
+};
 
 let displayDollar: Sprite;
 let displayBird: CSprite;
@@ -33,9 +24,9 @@ function setCSSHeightVar() {
 
   const screens = document.getElementById('wrapper');
   if (screens) {
-    screens.style.maxWidth = `${D.canvas.offsetWidth}px`
-    screens.style.minWidth = `${D.canvas.offsetWidth}px`
-    screens.style.height = `${D.canvas.offsetHeight}px`
+    screens.style.maxWidth = `${D.canvas.offsetWidth}px`;
+    screens.style.minWidth = `${D.canvas.offsetWidth}px`;
+    screens.style.height = `${D.canvas.offsetHeight}px`;
     screens.style.left = `${D.canvas.offsetLeft}px`;
     screens.style.top = `${D.canvas.offsetTop}px`;
   }
@@ -60,10 +51,10 @@ function renderStats() {
   const wrapper = document.getElementById('statItems')!;
   wrapper.innerHTML = '';
 
-  renderItem(wrapper, `High Score:<br/>${stats.highScore}`)
-  renderItem(wrapper, `Times Played:<br/>${stats.plays}`)
-  renderItem(wrapper, `Money Earned:<br/>${stats.earned}`)
-  renderItem(wrapper, `Windows Broken:<br/>${stats.breaks}`)
+  renderItem(wrapper, `High Score:<br/>${stats.highScore}`);
+  renderItem(wrapper, `Times Played:<br/>${stats.plays}`);
+  renderItem(wrapper, `Money Earned:<br/>${stats.earned}`);
+  renderItem(wrapper, `Windows Broken:<br/>${stats.breaks}`);
 }
 
 function setDomStuff() {
@@ -72,40 +63,40 @@ function setDomStuff() {
   const statBtn = document.getElementById('statBtn');
   const fsBtn = document.getElementById('fs');
   renderStats();
-  
+
   playBtn?.addEventListener('click', () => {
-    startGame()
-  })
+    startGame();
+  });
   shopBtn?.addEventListener('click', () => {
     D.setShopping();
     D.context.clearRect(0, 0, D.canvas.width, D.canvas.height);
     showElement('store', true, 'flex');
     showElement('stats', false);
     setAvailable();
-  })
+  });
   statBtn?.addEventListener('click', () => {
     D.setShopping();
     D.context.clearRect(0, 0, D.canvas.width, D.canvas.height);
     showElement('store', false, 'flex');
     showElement('stats', true);
-    renderStats()
-  })
+    renderStats();
+  });
   fsBtn?.addEventListener('click', () => {
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else {
       document.documentElement.requestFullscreen();
     }
-  })
+  });
 }
 
 window.addEventListener('resize', () => {
-  console.log('RESIZE')
+  console.log('RESIZE');
   setCSSHeightVar();
 });
 
 window.addEventListener('fullscreenchange', () => {
-  console.log('FULLSCREEN')
+  console.log('FULLSCREEN');
   setCSSHeightVar();
 });
 
@@ -116,21 +107,21 @@ if (document.monetization) {
   // @ts-ignore
   document.monetization.addEventListener('monetizationstart', () => {
     const stats = getStats();
-    const coil = document.getElementById('coil')!;
+    const coilMain = document.getElementById('coilMain')!;
     const coilNew = document.getElementById('coilNew')!;
 
-    coil.style.display = 'block';
-    
+    coilMain.style.display = 'block';
+
     if (!stats.coil) {
       setStats({
         coil: true,
         money: stats.money + 600,
         earned: stats.earned + 600,
-      })
+      });
     } else {
       coilNew.style.display = 'none';
     }
-  })
+  });
 } else {
   console.log('No monetization');
 }
@@ -139,12 +130,12 @@ if (document.monetization) {
 // document.monetization.dispatchEvent(new Event('monetizationstart'));
 
 window.addEventListener('load', () => {
-  console.log('load')
+  console.log('load');
   setCSSHeightVar();
   setDomStuff();
   initKeys();
-  initPointer();  
-})
+  initPointer();
+});
 
 function setBirdData(data: Record<string, any>) {
   Object.keys(data).forEach((k) => {
@@ -152,7 +143,7 @@ function setBirdData(data: Record<string, any>) {
       crowSprite.y = data.y - D.hitboxOffset;
       bird.y = data.y;
     } else {
-      crowSprite[k] = data[k]
+      crowSprite[k] = data[k];
       bird[k] = data[k];
     }
   });
@@ -331,12 +322,12 @@ function endCurrentRun() {
     plays: stats.plays + 1,
     breaks: stats.breaks + D.brokenWindowsInRun,
     highScore: D.distance,
-  })
-  showElement('wrapper', true)
+  });
+  showElement('wrapper', true);
   D.setMenuing();
 }
 
-let frameTrack = 0
+let frameTrack = 0;
 function updateBird() {
   /**
    * Move the bird up or down
@@ -346,8 +337,8 @@ function updateBird() {
    * Update the bird
    */
   if (
-    (keyPressed('space') || pointerPressed('left') || (getPointer().touches as any).length > 0)
-    && bird.dy > D.maxDyUp &&
+    (keyPressed('space') || pointerPressed('left') || (getPointer().touches as any).length > 0) &&
+    bird.dy > D.maxDyUp &&
     (D.playing || bird.dx > 2)
   ) {
     setBirdData({ dy: bird.dy - D.maxDyUpChange });
@@ -362,7 +353,7 @@ function updateBird() {
   }
 
   if (bird.dx < 0) {
-    bird.dx += .011;
+    bird.dx += 0.011;
   } else {
     bird.dx = 0;
     bird.x = Math.round(bird.x);
@@ -377,7 +368,7 @@ function updateBird() {
       sounds.flap();
       frameTrack = 0;
     } else {
-      frameTrack += 1
+      frameTrack += 1;
     }
   }
 
@@ -403,7 +394,6 @@ let loop = GameLoop({
   },
   render: function () {
     if (!D.shopping) {
-
       crowSprite.render();
 
       D.objectives.forEach((objective) => {
@@ -422,9 +412,9 @@ let loop = GameLoop({
 });
 
 function startGame() {
-  showElement('wrapper', false)
-  showElement('store', false)
-  showElement('stats', false)
+  showElement('wrapper', false);
+  showElement('store', false);
+  showElement('stats', false);
 
   resetData();
 
@@ -433,13 +423,13 @@ function startGame() {
     y: D.birdStartY,
     dy: D.birdStartDy,
     dx: 0,
-  })
+  });
 
   crowSprite.playAnimation('fly');
 
   D.setPlaying();
 
-  loop.start()
+  loop.start();
 
   // makeDebugObjectives();
   makeStartingObjectives();

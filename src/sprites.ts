@@ -1,6 +1,4 @@
-import {
-  SpriteSheet,
-} from 'kontra';
+import { SpriteSheet } from 'kontra';
 import { CSprite, data as D } from './data';
 import crowRawImage from './images/crow-outline.png';
 import dollarRawImage from './images/dollar-outline.png';
@@ -23,12 +21,11 @@ const birdX = D.birdStartX;
 
 function makeSprites(startFn?: () => void) {
   function checkLoaded(loadedImage: HTMLImageElement) {
-    loaded.push(loadedImage)
+    loaded.push(loadedImage);
     if (loaded.length === totalLoads && startFn) {
       startFn();
     }
   }
-
 
   bird = new CSprite({
     x: D.birdStartX,
@@ -42,7 +39,7 @@ function makeSprites(startFn?: () => void) {
 
   /* Crow Pixel Sprite Large */
   const crowImg = new Image();
-  crowImg.src = crowRawImage
+  crowImg.src = crowRawImage;
   crowImg.width = 650;
   crowImg.height = 65;
   crowImg.onload = function () {
@@ -60,7 +57,7 @@ function makeSprites(startFn?: () => void) {
         },
         hit: {
           frames: '0',
-        }
+        },
       },
     });
 
@@ -71,29 +68,29 @@ function makeSprites(startFn?: () => void) {
       enabled: true,
     });
 
-    checkLoaded(crowImg)
+    checkLoaded(crowImg);
   };
 
   dollarImg = new Image();
   dollarImg.src = dollarRawImage;
-  dollarImg.width = 30
-  dollarImg.height = 14
+  dollarImg.width = 30;
+  dollarImg.height = 14;
   dollarImg.onload = function () {
-    checkLoaded(dollarImg)
-  }
+    checkLoaded(dollarImg);
+  };
 
   tinyBirdImg = new Image();
   tinyBirdImg.src = tinyBirdImage;
-  tinyBirdImg.width = 30
-  tinyBirdImg.height = 14
+  tinyBirdImg.width = 30;
+  tinyBirdImg.height = 14;
   tinyBirdImg.onload = function () {
-    checkLoaded(tinyBirdImg)
-  }
+    checkLoaded(tinyBirdImg);
+  };
 
   windowImg = new Image();
   windowImg.src = windowRawImage;
-  windowImg.width = 270
-  windowImg.height = 155
+  windowImg.width = 270;
+  windowImg.height = 155;
   windowImg.onload = function () {
     windowSheet = SpriteSheet({
       frameWidth: 45,
@@ -112,8 +109,8 @@ function makeSprites(startFn?: () => void) {
       image: windowImg,
     });
 
-    checkLoaded(windowImg)
-  }
+    checkLoaded(windowImg);
+  };
 }
 
 export function makeTinybird() {
@@ -124,13 +121,7 @@ export function makeTinybird() {
     width: 30,
     height: 14,
     enabled: true,
-  })
+  });
 }
 
-export {
-  makeSprites,
-  bird,
-  crowSprite,
-  dollarImg,
-  windowSheet,
-}
+export { makeSprites, bird, crowSprite, dollarImg, windowSheet };

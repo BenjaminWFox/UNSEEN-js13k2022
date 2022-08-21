@@ -18,7 +18,7 @@ const stats: Stats = {
   plays: 0,
   coil: false,
   purchases: {},
-}
+};
 
 export function getStats(): Stats {
   const result = JSON.parse(window.localStorage.getItem('js13k22-unseen-stats') || JSON.stringify(stats));
@@ -33,15 +33,16 @@ export function setStats(statsToSet: Partial<Stats>) {
   const newStats = {
     ...current,
     ...statsToSet,
-  }
+  };
 
-  newStats.highScore = statsToSet.highScore && statsToSet.highScore > current.highScore ? statsToSet.highScore : current.highScore;
+  newStats.highScore =
+    statsToSet.highScore && statsToSet.highScore > current.highScore ? statsToSet.highScore : current.highScore;
 
   if (statsToSet.purchases) {
     newStats.purchases = {
       ...current.purchases,
       ...statsToSet.purchases,
-    }
+    };
   }
 
   console.log('SETTING STATS', newStats);
@@ -146,10 +147,10 @@ function initData() {
 
 let data = {
   ...initData(),
-  setPlaying: () => { },
-  setEnding: () => { },
-  setMenuing: () => { },
-  setShopping: () => { },
+  setPlaying: () => {},
+  setEnding: () => {},
+  setMenuing: () => {},
+  setShopping: () => {},
 };
 
 function resetData() {
@@ -185,16 +186,16 @@ function resetData() {
   };
 
   if (stats.purchases.neck) {
-    data.powerups.life += 1
+    data.powerups.life += 1;
   }
   if (stats.purchases.steel) {
-    data.powerups.life += 2
+    data.powerups.life += 2;
   }
   if (stats.purchases.money) {
     data.powerups.money = 20;
   }
   if (stats.purchases.sabotage) {
-    console.log('GLASS!')
+    console.log('GLASS!');
     data.powerups.sabotage = true;
   }
   if (stats.purchases.agile) {

@@ -41,56 +41,47 @@ class SinFn {
 }
 
 const altSmallRows = new SinFn(
-  (i: number, yPos: number) => yPos * D.ratio + (100 * mod) * D.ratio * Math.sin(2 * Math.PI * (i * 0.5) + 3),
+  (i: number, yPos: number) => yPos * D.ratio + 100 * mod * D.ratio * Math.sin(2 * Math.PI * (i * 0.5) + 3),
   50 * mod,
   750 * mod
 );
 const altMedRows = new SinFn(
-  (i: number, yPos: number) => yPos * D.ratio + (150 * mod) * D.ratio * Math.sin(2 * Math.PI * (i * 0.5) + 3),
+  (i: number, yPos: number) => yPos * D.ratio + 150 * mod * D.ratio * Math.sin(2 * Math.PI * (i * 0.5) + 3),
   50 * mod,
-  750 * mod,
+  750 * mod
 );
 const smallWave = new SinFn(
-  (i: number, yPos: number) => yPos * D.ratio - (25 * mod) * D.ratio * Math.sin(2.5 * Math.PI * i * 0.1 + 3),
+  (i: number, yPos: number) => yPos * D.ratio - 25 * mod * D.ratio * Math.sin(2.5 * Math.PI * i * 0.1 + 3),
   100 * mod,
-  700 * mod,
+  700 * mod
 );
 const medWave = new SinFn(
-  (i: number, yPos: number) => yPos * D.ratio + (115 * mod) * D.ratio * Math.sin(2 * Math.PI * (i * 0.05) + 3),
+  (i: number, yPos: number) => yPos * D.ratio + 115 * mod * D.ratio * Math.sin(2 * Math.PI * (i * 0.05) + 3),
   170 * mod,
-  610 * mod,
+  610 * mod
 );
 const bigWave = new SinFn(
-  (i: number, yPos: number) => yPos * D.ratio + (100 * mod) * D.ratio * Math.sin(2.5 * Math.PI * (i * 0.05) + 0),
+  (i: number, yPos: number) => yPos * D.ratio + 100 * mod * D.ratio * Math.sin(2.5 * Math.PI * (i * 0.05) + 0),
   300 * mod,
-  490 * mod,
+  490 * mod
 );
 const shortCurve = new SinFn(
-  (i: number, yPos: number) => yPos * D.ratio + (150 * mod) * D.ratio * Math.sin(2 * Math.PI * (i * 0.02) + 3),
+  (i: number, yPos: number) => yPos * D.ratio + 150 * mod * D.ratio * Math.sin(2 * Math.PI * (i * 0.02) + 3),
   170 * mod,
-  740 * mod,
+  740 * mod
 );
 const bigFish = new SinFn(
-  (i: number, yPos: number) => yPos * D.ratio + (150 * mod) * D.ratio * Math.sin(3 * Math.PI * (i * 0.984) + 0),
+  (i: number, yPos: number) => yPos * D.ratio + 150 * mod * D.ratio * Math.sin(3 * Math.PI * (i * 0.984) + 0),
   170 * mod,
-  610 * mod,
+  610 * mod
 );
 const smallFish = new SinFn(
-  (i: number, yPos: number) => yPos * D.ratio + (50 * mod) * D.ratio * Math.sin(3 * Math.PI * (i * 0.98) + 0),
+  (i: number, yPos: number) => yPos * D.ratio + 50 * mod * D.ratio * Math.sin(3 * Math.PI * (i * 0.98) + 0),
   70 * mod,
-  710 * mod,
+  710 * mod
 );
 
-const fns = [
-  altSmallRows,
-  altMedRows,
-  smallWave,
-  medWave,
-  bigWave,
-  shortCurve,
-  bigFish,
-  smallFish
-];
+const fns = [altSmallRows, altMedRows, smallWave, medWave, bigWave, shortCurve, bigFish, smallFish];
 
 // This will call the SinFn to build a function with a random yPos
 function getRandomFn(): (i: number) => number {
