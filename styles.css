@@ -5,8 +5,8 @@
     image-rendering: -webkit-crisp-edges;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-    border: 1px #fff solid;
     font-size: 10px;
+    box-shadow: inset 0px 0px 0px 1px #fff;
 }
 
 /* Get rid of any margins, set background black, use flexbox to center */
