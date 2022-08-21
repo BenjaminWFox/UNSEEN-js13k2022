@@ -48,19 +48,22 @@ function showElement(elId: string, doShow: boolean, displayType = 'block') {
   }
 }
 
-function setContentById(content: string, id: string) {
-  const el = document.getElementById(id)
-  if (el) {
-    el.innerHTML = content;
-  }
+function renderItem(parent: HTMLElement, content: string) {
+  const el = document.createElement('p');
+  el.classList.add('stat');
+  el.innerHTML = content;
+  parent.appendChild(el);
 }
 
 function renderStats() {
   const stats = getStats();
-  setContentById(`High Score: ${stats.highScore}`, 'hs');
-  setContentById(`Times Played: ${stats.plays}`, 'tp');
-  setContentById(`Money Earned: ${stats.earned}`, 'me');
-  setContentById(`Windows Broken: ${stats.breaks}`, 'wb');
+  const wrapper = document.getElementById('statItems')!;
+  wrapper.innerHTML = '';
+
+  renderItem(wrapper, `High Score:<br/>${stats.highScore}`)
+  renderItem(wrapper, `Times Played:<br/>${stats.plays}`)
+  renderItem(wrapper, `Money Earned:<br/>${stats.earned}`)
+  renderItem(wrapper, `Windows Broken:<br/>${stats.breaks}`)
 }
 
 function setDomStuff() {
@@ -105,6 +108,35 @@ window.addEventListener('fullscreenchange', () => {
   console.log('FULLSCREEN')
   setCSSHeightVar();
 });
+
+// @ts-ignore
+if (document.monetization) {
+  // @ts-ignore
+  document.monetization.addEventListener('monetizationpending', () => console.log('hi'));
+  // @ts-ignore
+  document.monetization.addEventListener('monetizationstart', () => {
+    const stats = getStats();
+    const coil = document.getElementById('coil')!;
+    const coilNew = document.getElementById('coilNew')!;
+
+    coil.style.display = 'block';
+    
+    if (!stats.coil) {
+      setStats({
+        coil: true,
+        money: stats.money + 600,
+        earned: stats.earned + 600,
+      })
+    } else {
+      coilNew.style.display = 'none';
+    }
+  })
+} else {
+  console.log('No monetization');
+}
+
+// @ts-ignore
+// document.monetization.dispatchEvent(new Event('monetizationstart'));
 
 window.addEventListener('load', () => {
   console.log('load')

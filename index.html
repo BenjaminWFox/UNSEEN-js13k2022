@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="monetization" content="$ilp.uphold.com/YPyGRY7bJfP3">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
   <title>JS13K Demo</title>
   <script type="module" src="/src/index.ts"></script>
@@ -16,7 +17,7 @@
       <h1>UNSEEN</h1>
       <div id="menu">
         <div>
-          <h2><button id="statBtn">STAT</button></h2>
+          <h2><button id="statBtn">STATS</button></h2>
         </div>
         <div id="separator"></div>
         <div>
@@ -29,15 +30,14 @@
       </div>
       <div id="store">
         <div id="available"></div>
-        <div id="items">
+        <div id="items" class="items">
         </div>
         <button id="buy"></button>
       </div>
       <div id="stats">
-        <p id="hs"></p>
-        <p id="tp"></p>
-        <p id="me"></p>
-        <p id="wb"></p>
+        <div id="statItems" class="items"></div>
+        <p>Avoid windows, pickup money! Space, Left Mouse, or Tap to go up. Release to go down.</p>
+        <p id="coil">Thanks Coil Subscriber! <span id="coilNew">Head to the shop, you've got something to spend!</span></p>
       </div>
     </div>
   </div>

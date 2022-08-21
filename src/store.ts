@@ -1,4 +1,5 @@
 import { dollarImg } from './sprites';
+import dollarRawImage from './images/dollar-outline.png';
 import { getStats, setStats } from './data'
 
 interface Item {
@@ -75,6 +76,12 @@ export function setupStore() {
         }
 
         setAvailable();
+      } else {
+        const availableBtn = document.getElementById('available')!;
+        availableBtn.style.animationName = 'emphasize';
+        setTimeout(() => {
+          availableBtn.style.animationName = '';
+        }, 400)
       }
     })
 
@@ -83,15 +90,24 @@ export function setupStore() {
     items.forEach(item => {
       const owned = stats.purchases[item.id];
       const btn = document.createElement('button');
-
+      const amt = document.createElement('div');
+      
       btn.classList.add('item');
       btn.innerHTML = item.title;
+      amt.innerHTML = item.cost.toString();
+      amt.classList.add('itemAmount');
+      const amtImg = document.createElement('img');
+      amtImg.src = dollarRawImage;
+      amt.append(amtImg);
+
+      btn.appendChild(amt);
       if (owned) {
         btn.classList.add('owned');
       }
 
       btn.addEventListener('click', () => {
         buy.setAttribute('data-id', item.id);
+        dollarImg.setAttribute('data-id', item.id);
 
         if (owned) {
           buy.innerHTML = `${item.desc} You already own this!`

@@ -6,6 +6,7 @@ interface Stats {
   earned: number;
   breaks: number;
   plays: number;
+  coil: boolean;
   purchases: Record<string, string>;
 }
 
@@ -15,6 +16,7 @@ const stats: Stats = {
   earned: 0,
   breaks: 0,
   plays: 0,
+  coil: false,
   purchases: {},
 }
 

@@ -58,19 +58,21 @@ button:hover {
 }
 
 button:active, #available, #fs {
+    animation-duration: .25s;
+    animation-iteration-count: 1;
     color: #fff;
 }
 
-#items {
+#items, #statItems {
     margin: .5em;
     display: flex;
     align-items: center;
+    justify-content: center;
     overflow: scroll;
     max-width: 100%;
 }
 
-#store {
-    /* display: none; */
+#store, #stats {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -82,8 +84,9 @@ button:active, #available, #fs {
     font-size: 1vw;
 }
 
-#buy {
+#buy:not(:empty) {
     margin-top: 1em;
+    border: 1px #fff solid;
 }
 
 #buy, #available {
@@ -100,18 +103,37 @@ button:active, #available, #fs {
     margin: .2em .5em 0;
 }
 
-button.item {
+button.item, p.stat {
     color: #fff;
     border: 1px solid #fff;
     width: 6em;
     height: 6em;
-    margin: 0 2em;
+    margin: 0 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+p.stat {
+    border: none;
 }
 
 button.item.owned {
     border: 1px solid #ccc;
     color: #ccc;
     text-decoration: line-through;
+}
+
+.itemAmount {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: .5em;
+}
+
+.itemAmount img {
+    margin-left: .25em;
 }
 
 /* Input whatever aspect ratio you use here */
@@ -179,6 +201,10 @@ p {
     z-index: 20;
 }
 
+#coil {
+    display: none;
+}
+
 @media (orientation:landscape) {
     h1 {
         font-size: 14vh;
@@ -189,10 +215,26 @@ p {
     }
     button.item {
         width: auto;
-        height: 4em;    
     }
     #available {
         font-size: 3vh;
     }
 }
 
+@supports (-webkit-touch-callout: none) {
+    #fs {
+        display: none;
+    }
+  }
+  
+@keyframes emphasize {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.5);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
