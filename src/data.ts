@@ -1,4 +1,4 @@
-import { init, Sprite, SpriteClass } from 'kontra';
+import { angleToTarget, init, movePoint, Sprite, SpriteClass } from 'kontra';
 
 interface Stats {
   money: number;
@@ -52,12 +52,42 @@ export function setStats(statsToSet: Partial<Stats>) {
 
 export interface CSprite extends Sprite {
   enabled: boolean;
+  destination?: Sprite | CSprite;
 }
 
 export class CSprite extends SpriteClass {
   constructor(properties: Record<string, any>) {
     super(properties);
     this.enabled = properties.enabled === false || true;
+  }
+
+  goTo(sprite: CSprite | Sprite) {
+    this.destination = sprite;
+  }
+
+  isAt() {
+    if (!this.destination) {
+      return false;
+    }
+
+    const angle = angleToTarget(this, this.destination)
+    const newCoords = movePoint({x: this.x, y: this.y}, angle, 15);
+
+    this.x = newCoords.x;
+    this.y = newCoords.y;
+
+    if (
+      Math.abs(this.x - this.destination.x) < 15
+      && Math.abs(this.y - this.destination.y) < 15
+      ) {
+        return true;
+    }
+
+    return false;
+  }
+  
+  get isMoving() {
+    return !!this.destination;
   }
 }
 let { canvas, context } = init();

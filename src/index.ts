@@ -234,12 +234,15 @@ function updateObjectives() {
     if (isPickup(sprite)) {
       D.pickups += 1;
 
+      sprite.enabled = false;
+      sprite.goTo(bird);
+
+      continue;
+    } else if (sprite.isMoving && sprite.isAt()) {
       D.objectives.splice(i, 1);
       i -= 1;
 
       sounds.pickup();
-
-      continue;
     }
 
     if (sprite.dx !== D.scrollSpeed) {
