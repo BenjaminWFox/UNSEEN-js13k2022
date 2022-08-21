@@ -11,7 +11,7 @@ const sounds = {
   flap: () => zzfx(...[0.05, , 562, 0.04, , 0.07, 4, 0.26, 6.4, , 88, 0.22, , , 4.8, 0.2, , 0.26, 0.01]),
   breakOuch: () => zzfx(...[0.5, 0, 222, 0.02, 0.1, 0.11, 4, 0.45, -1.5, , , , , 2, , 0.2, , 0.61, 0.2, 0.11]),
   breakMiss: () => zzfx(...[0.5, , 150, , 0.08, 0.13, 4, 2.84, 0.1, , , , 0.07, 1.7, , 0.1, 0.09, 0.8, 0.08, 0.2]),
-  miss: () => zzfx(...[0.5, , 259, 0.04, 0.06, 0.09, , 0.25, 12, , , , , 0.7, , , , 0.86, 0.1]),
+  miss: () => zzfx(...[0.25, , 259, 0.04, 0.06, 0.09, , 0.25, 12, , , , , 0.7, , , , 0.86, 0.1]),
   end: () => zzfx(...[1, 0, 5, , 0.28, 0.07, 2, 0.17, , , , , 0.01, 0.4, , 0.9, 0.15, 0.24, 0.07, 0.05]),
 };
 
@@ -194,7 +194,7 @@ function renderGameInfo() {
 }
 
 function isPickup(sprite: CSprite) {
-  return isCollision(bird, sprite, false, D.powerups.money + D.powerups.magnate);
+  return isCollision(bird, sprite, false, 15 + D.powerups.money + D.powerups.magnate);
 }
 
 function isWindowCollision(sprite: CSprite) {

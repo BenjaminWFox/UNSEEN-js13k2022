@@ -71,14 +71,14 @@ export class CSprite extends SpriteClass {
     }
 
     const angle = angleToTarget(this, this.destination)
-    const newCoords = movePoint({x: this.x, y: this.y}, angle, 15);
+    const newCoords = movePoint({x: this.x, y: this.y}, angle, data.scrollSpeed * -1.66);
 
     this.x = newCoords.x;
     this.y = newCoords.y;
 
     if (
-      Math.abs(this.x - this.destination.x) < 15
-      && Math.abs(this.y - this.destination.y) < 15
+      Math.abs(this.x - this.destination.x) < data.scrollSpeed * -2 
+      && Math.abs(this.y - this.destination.y) < data.scrollSpeed * -2
       ) {
         return true;
     }
