@@ -28,6 +28,15 @@ export const items = [
   new Item('sabotage', 'Sabotage Glass Supply', 'Easy-break glass! 50% chance to avoid death.', 1500, false),
 ];
 
+export const coilItems = [
+  new Item('magnate', 'Money Magnate (coil)', 'Absurd Pickup Radius!', 1000, false),
+  new Item('civics', 'Bribe City Council (coil)', 'Hi-viz Window Coatings! 50% chance to dodge windows.', 1500, false),
+];
+
+export function addCoilItems() {
+  coilItems.forEach(item => items.push(item));
+}
+
 export function setAvailable() {
   console.log('dollarImg', dollarImg);
 
@@ -41,13 +50,52 @@ export function setAvailable() {
   }
 }
 
+export function setupItems() {
+  const wrapper = document.getElementById('items')!;
+  const buy = document.getElementById('buy')!;
+  const stats = getStats();
+  
+  wrapper.innerHTML = '';
+
+  items.forEach((item) => {
+    const owned = stats.purchases[item.id];
+    const btn = document.createElement('button');
+    const amt = document.createElement('div');
+
+    btn.classList.add('item');
+    btn.innerHTML = item.title;
+    amt.innerHTML = item.cost.toString();
+    amt.classList.add('itemAmount');
+    const amtImg = document.createElement('img');
+    amtImg.src = dollarRawImage;
+    amt.append(amtImg);
+
+    btn.appendChild(amt);
+    if (owned) {
+      btn.classList.add('owned');
+    }
+
+    btn.addEventListener('click', () => {
+      buy.setAttribute('data-id', item.id);
+      dollarImg.setAttribute('data-id', item.id);
+
+      if (owned) {
+        buy.innerHTML = `${item.desc} You already own this!`;
+      } else {
+        buy.innerHTML = `${item.desc} Click here to buy for ${item.cost}`;
+        buy.appendChild(dollarImg);
+      }
+      btn.id = item.id;
+      btn.style.border = '1px #fff solid';
+    });
+    wrapper.appendChild(btn);
+  });
+}
+
 export function setupStore() {
   console.log('SETUP STORE! Do not call this more than once...');
   const wrapper = document.getElementById('items');
   const buy = document.getElementById('buy');
-  const img = document.createElement('img');
-
-  // setStats({money: 10000})
 
   if (wrapper && buy) {
     buy.addEventListener('click', (e) => {
@@ -85,40 +133,6 @@ export function setupStore() {
       }
     });
 
-    const stats = getStats();
-
-    items.forEach((item) => {
-      const owned = stats.purchases[item.id];
-      const btn = document.createElement('button');
-      const amt = document.createElement('div');
-
-      btn.classList.add('item');
-      btn.innerHTML = item.title;
-      amt.innerHTML = item.cost.toString();
-      amt.classList.add('itemAmount');
-      const amtImg = document.createElement('img');
-      amtImg.src = dollarRawImage;
-      amt.append(amtImg);
-
-      btn.appendChild(amt);
-      if (owned) {
-        btn.classList.add('owned');
-      }
-
-      btn.addEventListener('click', () => {
-        buy.setAttribute('data-id', item.id);
-        dollarImg.setAttribute('data-id', item.id);
-
-        if (owned) {
-          buy.innerHTML = `${item.desc} You already own this!`;
-        } else {
-          buy.innerHTML = `${item.desc} Click here to buy for ${item.cost}`;
-          buy.appendChild(dollarImg);
-        }
-        btn.id = item.id;
-        btn.style.border = '1px #fff solid';
-      });
-      wrapper.appendChild(btn);
-    });
+    setupItems();
   }
 }

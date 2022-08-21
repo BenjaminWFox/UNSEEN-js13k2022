@@ -137,8 +137,10 @@ function initData() {
     powerups: {
       life: 0,
       money: 0,
+      magnate: 0,
       agile: false,
       sabotage: false,
+      civics: false,
     },
   };
 
@@ -194,9 +196,14 @@ function resetData() {
   if (stats.purchases.money) {
     data.powerups.money = 20;
   }
+  if (stats.purchases.magnate) {
+    data.powerups.magnate = 100;
+  }
   if (stats.purchases.sabotage) {
-    console.log('GLASS!');
     data.powerups.sabotage = true;
+  }
+  if (stats.purchases.civics) {
+    data.powerups.civics = true;
   }
   if (stats.purchases.agile) {
     console.log('AGILE!');

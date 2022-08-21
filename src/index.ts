@@ -4,7 +4,7 @@ import { makeStartingObjectives, makeObjectiveSet, makeDisplayObjective } from '
 import { makeStartingObstacles, makeNewObstacle } from './obstacles';
 import { makeSprites, bird, crowSprite, makeTinybird } from './sprites';
 import { zzfx } from './zzfx';
-import { setAvailable, setupStore } from './store';
+import { addCoilItems, setAvailable, setupItems, setupStore } from './store';
 
 const sounds = {
   pickup: () => zzfx(...[0.25, , 4, 0.01, , 0.09, 1, 1.39, -41, -1.7, , , , , 3, , 0.01, 0.41, 0.04]),
@@ -69,6 +69,7 @@ function setDomStuff() {
   });
   shopBtn?.addEventListener('click', () => {
     D.setShopping();
+    setupItems();
     D.context.clearRect(0, 0, D.canvas.width, D.canvas.height);
     showElement('store', true, 'flex');
     showElement('stats', false);
@@ -111,6 +112,8 @@ if (document.monetization) {
     const coilNew = document.getElementById('coilNew')!;
 
     coilMain.style.display = 'block';
+
+    addCoilItems();
 
     if (!stats.coil) {
       setStats({
@@ -191,7 +194,7 @@ function renderGameInfo() {
 }
 
 function isPickup(sprite: CSprite) {
-  return isCollision(bird, sprite, false, D.powerups.money);
+  return isCollision(bird, sprite, false, D.powerups.money + D.powerups.magnate);
 }
 
 function isWindowCollision(sprite: CSprite) {
@@ -291,24 +294,31 @@ function updateObstacles() {
 function windowCollision(sprite: CSprite) {
   // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
   // bird.dx = D.scrollSpeed;
-  sprite.playAnimation('break');
-  D.brokenWindowsInRun += 1;
-
-  if (D.powerups.sabotage && RND(0, 9) >= 5) {
+  if (D.powerups.civics && RND(0, 9) >= 5) {
+    console.log('Barrel roll!');
+    sounds.miss();
+    sprite.enabled = false;
+  } else if (D.powerups.sabotage && RND(0, 9) >= 5) {
     console.log('Not today!');
     sounds.breakMiss();
     sprite.enabled = false;
+    sprite.playAnimation('break');
+    D.brokenWindowsInRun += 1;
   } else if (D.powerups.life > 0) {
     console.log('Oh, ouch!');
     D.powerups.life -= 1;
     sprite.enabled = false;
     sounds.breakMiss();
+    sprite.playAnimation('break');
+    D.brokenWindowsInRun += 1;
   } else {
     console.log('Ahh dangit!');
     D.setEnding();
     setBirdData({ dx: D.scrollSpeed / 5 });
     crowSprite.playAnimation('hit');
     sounds.breakOuch();
+    sprite.playAnimation('break');
+    D.brokenWindowsInRun += 1;
   }
 }
 
