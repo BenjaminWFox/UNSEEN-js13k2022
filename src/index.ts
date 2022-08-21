@@ -28,17 +28,17 @@ let displayDollar: Sprite;
 let displayBird: CSprite;
 
 function setCSSHeightVar() {
+  let vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty('--vh', `${vh}px`);
+
   const screens = document.getElementById('wrapper');
   if (screens) {
     screens.style.maxWidth = `${D.canvas.offsetWidth}px`
     screens.style.minWidth = `${D.canvas.offsetWidth}px`
     screens.style.height = `${D.canvas.offsetHeight}px`
-    screens.style.left = `${D.canvas.offsetLeft}`;
+    screens.style.left = `${D.canvas.offsetLeft}px`;
     screens.style.top = `${D.canvas.offsetTop}px`;
   }
-
-  let vh = window.innerHeight * 0.01;
-  document.documentElement.style.setProperty('--vh', `${vh}px`);
 }
 
 function showElement(elId: string, doShow: boolean, displayType = 'block') {
@@ -48,9 +48,28 @@ function showElement(elId: string, doShow: boolean, displayType = 'block') {
   }
 }
 
+function setContentById(content: string, id: string) {
+  const el = document.getElementById(id)
+  if (el) {
+    el.innerHTML = content;
+  }
+}
+
+function renderStats() {
+  const stats = getStats();
+  setContentById(`High Score: ${stats.highScore}`, 'hs');
+  setContentById(`Times Played: ${stats.plays}`, 'tp');
+  setContentById(`Money Earned: ${stats.earned}`, 'me');
+  setContentById(`Windows Broken: ${stats.breaks}`, 'wb');
+}
+
 function setDomStuff() {
   const playBtn = document.getElementById('playBtn');
   const shopBtn = document.getElementById('shopBtn');
+  const statBtn = document.getElementById('statBtn');
+  const fsBtn = document.getElementById('fs');
+  renderStats();
+  
   playBtn?.addEventListener('click', () => {
     startGame()
   })
@@ -58,18 +77,42 @@ function setDomStuff() {
     D.setShopping();
     D.context.clearRect(0, 0, D.canvas.width, D.canvas.height);
     showElement('store', true, 'flex');
+    showElement('stats', false);
     setAvailable();
+  })
+  statBtn?.addEventListener('click', () => {
+    D.setShopping();
+    D.context.clearRect(0, 0, D.canvas.width, D.canvas.height);
+    showElement('store', false, 'flex');
+    showElement('stats', true);
+    renderStats()
+  })
+  fsBtn?.addEventListener('click', () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
+    }
   })
 }
 
 window.addEventListener('resize', () => {
+  console.log('RESIZE')
   setCSSHeightVar();
 });
 
-setCSSHeightVar();
-setDomStuff();
-initKeys();
-initPointer();
+window.addEventListener('fullscreenchange', () => {
+  console.log('FULLSCREEN')
+  setCSSHeightVar();
+});
+
+window.addEventListener('load', () => {
+  console.log('load')
+  setCSSHeightVar();
+  setDomStuff();
+  initKeys();
+  initPointer();  
+})
 
 function setBirdData(data: Record<string, any>) {
   Object.keys(data).forEach((k) => {
@@ -113,7 +156,7 @@ const livesText = KText({
   anchor: { x: 0, y: 0 },
 });
 
-function renderStats() {
+function renderGameInfo() {
   distanceText.text = `${String(D.distance).padStart(5, '0')}m`;
   moneyText.text = `${D.pickups}`;
   livesText.text = D.powerups.life.toString();
@@ -226,6 +269,7 @@ function windowCollision(sprite: CSprite) {
   // bird.dx = D.scrollSpeed * -.25; // Enable for forward-moving finish
   // bird.dx = D.scrollSpeed;
   sprite.playAnimation('break');
+  D.brokenWindowsInRun += 1;
 
   if (D.powerups.sabotage && RND(0, 9) >= 5) {
     console.log('Not today!');
@@ -251,6 +295,9 @@ function endCurrentRun() {
   sounds.end();
   setStats({
     money: stats.money + D.pickups,
+    earned: stats.earned + D.pickups,
+    plays: stats.plays + 1,
+    breaks: stats.breaks + D.brokenWindowsInRun,
     highScore: D.distance,
   })
   showElement('wrapper', true)
@@ -337,7 +384,7 @@ let loop = GameLoop({
 
       bird.render();
 
-      renderStats();
+      renderGameInfo();
     }
   },
 });
@@ -345,6 +392,7 @@ let loop = GameLoop({
 function startGame() {
   showElement('wrapper', false)
   showElement('store', false)
+  showElement('stats', false)
 
   resetData();
 

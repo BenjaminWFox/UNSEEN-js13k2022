@@ -36,6 +36,7 @@ export default defineConfig(({ command, mode }) => {
   if (command !== 'build') {
     return {
       server: {
+        host: '0.0.0.0',
         port: 3000,
       },
     };

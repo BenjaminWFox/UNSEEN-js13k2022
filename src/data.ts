@@ -1,14 +1,20 @@
 import { init, Sprite, SpriteClass } from 'kontra';
 
 interface Stats {
-    money: number;
-    highScore: number;
-    purchases: Record<string, string>;
+  money: number;
+  highScore: number;
+  earned: number;
+  breaks: number;
+  plays: number;
+  purchases: Record<string, string>;
 }
 
 const stats: Stats = {
   money: 0,
   highScore: 0,
+  earned: 0,
+  breaks: 0,
+  plays: 0,
   purchases: {},
 }
 
@@ -22,20 +28,23 @@ export function getStats(): Stats {
 
 export function setStats(statsToSet: Partial<Stats>) {
   const current = getStats();
+  const newStats = {
+    ...current,
+    ...statsToSet,
+  }
 
-  current.money = statsToSet?.money || current.money;
-  current.highScore = statsToSet.highScore && statsToSet.highScore > current.highScore ? statsToSet.highScore : current.highScore;
-  
+  newStats.highScore = statsToSet.highScore && statsToSet.highScore > current.highScore ? statsToSet.highScore : current.highScore;
+
   if (statsToSet.purchases) {
-    current.purchases = {
+    newStats.purchases = {
       ...current.purchases,
       ...statsToSet.purchases,
     }
   }
-  
-  console.log('SETTING STATS', current);
 
-  window.localStorage.setItem('js13k22-unseen-stats', JSON.stringify(current));
+  console.log('SETTING STATS', newStats);
+
+  window.localStorage.setItem('js13k22-unseen-stats', JSON.stringify(newStats));
 }
 
 export interface CSprite extends Sprite {
@@ -121,6 +130,7 @@ function initData() {
     lastObstacleSpawn: 0,
     canSpawnObstacle: false,
     hitboxOffset: 30,
+    brokenWindowsInRun: 0,
     powerups: {
       life: 0,
       money: 0,
@@ -134,10 +144,10 @@ function initData() {
 
 let data = {
   ...initData(),
-  setPlaying: () => {},
-  setEnding: () => {},
-  setMenuing: () => {},
-  setShopping: () => {},
+  setPlaying: () => { },
+  setEnding: () => { },
+  setMenuing: () => { },
+  setShopping: () => { },
 };
 
 function resetData() {

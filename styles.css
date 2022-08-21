@@ -19,6 +19,7 @@ html, body {
     height: 100%;
     font-family: Georgia, 'Times New Roman', Times, serif;
     font-style: italic;
+    overflow: hidden;
 }
 
 h1, h2, h3 {
@@ -48,6 +49,7 @@ button {
     font-size: inherit;
     font-family: inherit;
     font-style: inherit;
+    color: black;
 }
 
 button:hover {
@@ -55,16 +57,16 @@ button:hover {
     cursor: pointer;
 }
 
-button:active, #available {
+button:active, #available, #fs {
     color: #fff;
 }
 
 #items {
-    margin-top: 1em;
-    width: 100%;
+    margin: .5em;
     display: flex;
     align-items: center;
     overflow: scroll;
+    max-width: 100%;
 }
 
 #store {
@@ -76,7 +78,12 @@ button:active, #available {
 }
 
 #available {
+    margin: .5em;
     font-size: 1vw;
+}
+
+#buy {
+    margin-top: 1em;
 }
 
 #buy, #available {
@@ -89,10 +96,6 @@ button:active, #available {
     padding: .5em;
 }
 
-#buy {
-    margin-top: 1em;
-}
-
 #buy img, #available img {
     margin: .2em .5em 0;
 }
@@ -103,7 +106,6 @@ button.item {
     width: 6em;
     height: 6em;
     margin: 0 2em;
-    flex-grow: 1;
 }
 
 button.item.owned {
@@ -170,13 +172,24 @@ p {
     font-size: 1.75vw;
 }
 
+#fs {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    z-index: 20;
+}
 
 @media (orientation:landscape) {
     h1 {
         font-size: 14vh;
+        margin: .15em 0;
     }
     h2 {
-        font-size: 6vh;
+        font-size: 8vh;
+    }
+    button.item {
+        width: auto;
+        height: 4em;    
     }
     #available {
         font-size: 3vh;
